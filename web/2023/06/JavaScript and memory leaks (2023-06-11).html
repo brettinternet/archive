@@ -1,0 +1,1016 @@
+<!DOCTYPE html> <html style><!--
+ Page saved with SingleFile 
+ url: http://www.javascriptkit.com/javatutors/closuresleak/index.shtml 
+ saved date: Sat Jun 10 2023 20:16:50 GMT-0600 (Mountain Daylight Time)
+--><meta charset=utf-8>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<title>JavaScript and memory leaks</title>
+
+<link type=image/x-icon rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AFfbVwCyq7MAXFdbAAprCgCX+JcALactAC0xLQB9o34AzP/MANvP2gAwYy8Ad3B3ALXZtQBdrl0AdeN2AJDOkQCam5kAIYUhAEG+QQA8gjwAr/+vAApJCgDEwMMAe8R8AOnm6QBFZEUAQT1AAGaBZgBAnkAAiYuJAH/7fgCK5ooAGlUaAKLMogBn8mgAZmhmAFK/UwC78bsAN0w3AKntqQAXdBYApKikAPTy9ABJzUkAMIowAI6jjQBLSEsAzs7NAHyRfAC3u7gAJJwjADyvOwBMcUwAda51AGDkYQBaZ1sASbJIAJbclQDf3uAAe357ADF7MQA8XDwANjs2AGx0bAANVwwAWshbAKqdqgCotKkAQnhDAHBmbwByu3MAP5E/AIZ/hQCg7qAArdysAE1gTQBks2UALj4uAGhdZwCvuq8AvLK7AD5QPgA0pTQAbvBvAPr4+gA3VjYAnqOeALXutACAmoAA7u3tALzCvACT8ZIAK54rACKTIwA6QjoAZ+loAA9PDwAcfx0AT81PAH6FfgBKxUoAgMmAANjW2ADTz9MAlpWWALS2swCfnJ8AM14zAKyvrAB2fnYAa4FrACiYKQA9tT4AncqeAF9lXwC+vL4AV2JYAFrgWgCDn4MA5ePlAN7Y3gAvODAAwMXAAEReRAA3qjYAF3oXAG16bACvqK8Aho6FAH15fQA9VTwAp6+nACiiKQBLtUwA/vr+APHs8QAchBwAI6EjACidJwC0sbQAYelhAOPf4wAuoS0AtrS3AIyNjAC6troAsa+xAPHx8QDi4+IA3NPbAL/BvwC0u7UAsryxADI5MgCbnpsAWOBXAIN/gwD9/f0A8+/0AJ6gnQD4+fgAKqQqALGpsQBl6GYAa3hrAPz7/AAYeBgAJ5smACqfKQAsoCwAs6+zAOfj5gAvNi8A39zfAM3MzQDCwMIASsdJAEyzTACZnZkA//3/APr6+gCyrbMA/v7+APPz8wDw7fAA6OXoAOPi4wAzpDMA/vv9APn5+QAuOC8AF3kYAEmzSQB2rnYA/v/+AP79/gD9/v0A/fz9AOjm6ADm4+YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuAG6jxrFAQEBAQG1rY+7Abh8YHtABJO2AcQ8Ja6bwG/FWn9jKhcIacQsPULBqAUdiHiGB4yjYp6/AyI0qYs+GL4vHrO9q4p2C31fXqoTZVafllhwOn5xTYMuclSQNpcBuAGJksKyNVNGLWYUFaTHAbgBAbQmd2QoD50Ch4KgAQG4AQGhQyQ4hE6OpW1EAQEBuAG4azdnGYBIjlVJMMkBAbgBAbxKUEeBMhBhIAwNpwG4AQEzGz9XQVIJBl0hT7cBuAG4nBFLOzl6bHMpFsMcW7gBARIjJ0x0yK8fDlkKpmq4AQExhZpFKwEBaG5RXJmYAbi4lbGNkXnGuKKwrJR1uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="><link rel=canonical href=http://www.javascriptkit.com/javatutors/closuresleak/index.shtml><meta http-equiv=content-security-policy content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:; object-src 'self' data:; frame-src 'self' data:;"><style>
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/* Avoid adding ID selector rules in this style sheet, since they could
+ * inadvertently match elements in the article content. */
+
+:root {
+  --grey-90-a10: rgba(12, 12, 13, 0.1);
+  --grey-90-a20: rgba(12, 12, 13, 0.2);
+  --grey-90-a30: rgba(12, 12, 13, 0.3);
+  --grey-90-a80: rgba(12, 12, 13, 0.8);
+  --grey-30: #d7d7db;
+  --blue-40: #45a1ff;
+  --blue-40-a30: rgba(69, 161, 255, 0.3);
+  --blue-60: #0060df;
+  --body-padding: 64px;
+  --font-size: 12;
+  --content-width: 70em;
+  --line-height: 1.6em;
+}
+
+body {
+  --main-background: #fff;
+  --main-foreground: #333;
+  --font-color: #000000;
+  --primary-color: #0B83FF;
+  --toolbar-border: var(--grey-90-a20);
+  --toolbar-transparent-border: transparent;
+  --toolbar-box-shadow: var(--grey-90-a10);
+  --toolbar-button-background: transparent;
+  --toolbar-button-background-hover: var(--grey-90-a10);
+  --toolbar-button-foreground-hover: var(--font-color);
+  --toolbar-button-background-active: var(--grey-90-a20);
+  --toolbar-button-foreground-active: var(--primary-color);
+  --toolbar-button-border: transparent;
+  --toolbar-button-border-hover: transparent;
+  --toolbar-button-border-active: transparent;
+  --tooltip-background: var(--grey-90-a80);
+  --tooltip-foreground: white;
+  --tooltip-border: transparent;
+  --popup-background: white;
+  --popup-border: rgba(0, 0, 0, 0.12);
+  --opaque-popup-border: #e0e0e0;
+  --popup-line: var(--grey-30);
+  --popup-shadow: rgba(49, 49, 49, 0.3);
+  --popup-button-background: #edecf0;
+  --popup-button-background-hover: hsla(0,0%,70%,.4);
+  --popup-button-foreground-hover: var(--font-color);
+  --popup-button-background-active: hsla(240,5%,5%,.15);
+  --selected-background: var(--blue-40-a30);
+  --selected-border: var(--blue-40);
+  --font-value-border: var(--grey-30);
+  --icon-fill: #3b3b3c;
+  --icon-disabled-fill: #8080807F;
+  --link-foreground: var(--blue-60);
+  --link-selected-foreground: #333;
+  --visited-link-foreground: #b5007f;
+  /* light colours */
+}
+
+body.sepia {
+  --main-background: #f4ecd8;
+  --main-foreground: #5b4636;
+  --toolbar-border: #5b4636;
+}
+
+body.dark {
+  --main-background: rgb(28, 27, 34);
+  --main-foreground: #eee;
+  --font-color: #fff;
+  --toolbar-border: #4a4a4b;
+  --toolbar-box-shadow: black;
+  --toolbar-button-background-hover: var(--grey-90-a30);
+  --toolbar-button-background-active: var(--grey-90-a80);
+  --tooltip-background: black;
+  --tooltip-foreground: white;
+  --popup-background: rgb(66,65,77);
+  --opaque-popup-border: #434146;
+  --popup-line: rgb(82, 82, 94);
+  --popup-button-background: #5c5c61;
+  --popup-button-background-active: hsla(0,0%,70%,.6);
+  --selected-background: #3E6D9A;
+  --font-value-border: #656468;
+  --icon-fill: #fff;
+  --icon-disabled-fill: #ffffff66;
+  --link-foreground: #45a1ff;
+  --link-selected-foreground: #fff;
+  --visited-link-foreground: #e675fd;
+  /* dark colours */
+}
+
+body.hcm {
+  --main-background: Canvas;
+  --main-foreground: CanvasText;
+  --font-color: CanvasText;
+  --primary-color: SelectedItem;
+  --toolbar-border: CanvasText;
+   /* We need a true transparent but in HCM this would compute to an actual color,
+      so select the page's background color instead: */
+  --toolbar-transparent-border: Canvas;
+  --toolbar-box-shadow: Canvas;
+  --toolbar-button-background: ButtonFace;
+  --toolbar-button-background-hover: ButtonText;
+  --toolbar-button-foreground-hover: ButtonFace;
+  --toolbar-button-background-active: SelectedItem;
+  --toolbar-button-foreground-active: SelectedItemText;
+  --toolbar-button-border: ButtonText;
+  --toolbar-button-border-hover: ButtonText;
+  --toolbar-button-border-active: ButtonText;
+  --tooltip-background: Canvas;
+  --tooltip-foreground: CanvasText;
+  --tooltip-border: CanvasText;
+  --popup-background: Canvas;
+  --popup-border: CanvasText;
+  --opaque-popup-border: CanvasText;
+  --popup-line: CanvasText;
+  --popup-button-background: ButtonFace;
+  --popup-button-background-hover: ButtonText;
+  --popup-button-foreground-hover: ButtonFace;
+  --popup-button-background-active: ButtonText;
+  --selected-background: Canvas;
+  --selected-border: SelectedItem;
+  --font-value-border: CanvasText;
+  --icon-fill: ButtonText;
+  --icon-disabled-fill: GrayText;
+  --link-foreground: LinkText;
+  --link-selected-foreground: ActiveText;
+  --visited-link-foreground: VisitedText;
+}
+
+body {
+  margin: 0;
+  padding: var(--body-padding);
+  background-color: var(--main-background);
+  color: var(--main-foreground);
+}
+
+body.loaded {
+  transition: color 0.4s, background-color 0.4s;
+}
+
+body.dark *::-moz-selection {
+  background-color: var(--selected-background);
+}
+
+a::-moz-selection {
+  color: var(--link-selected-foreground);
+}
+
+body.sans-serif,
+body.sans-serif .remove-button {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+body.serif,
+body.serif .remove-button {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+/* Override some controls and content styles based on color scheme */
+
+body.light > .container > .header > .domain {
+  border-bottom-color: #333333 !important;
+}
+
+body.sepia > .container > .header > .domain {
+  border-bottom-color: #5b4636 !important;
+}
+
+body.dark > .container > .header > .domain {
+  border-bottom-color: #eeeeee !important;
+}
+
+body.light blockquote {
+  border-inline-start: 2px solid #333333 !important;
+}
+
+body.sepia blockquote {
+  border-inline-start: 2px solid #5b4636 !important;
+}
+
+body.dark blockquote {
+  border-inline-start: 2px solid #eeeeee !important;
+}
+
+.light-button {
+  color: #333333;
+  background-color: #ffffff;
+}
+
+.dark-button {
+  color: #eeeeee;
+  background-color: #1c1b22;
+}
+
+.sepia-button {
+  color: #5b4636;
+  background-color: #f4ecd8;
+}
+
+.auto-button {
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .auto-button {
+    background-color: #1c1b22;
+    color: #eeeeee;
+  }
+}
+
+@media not (prefers-color-scheme: dark) {
+  .auto-button {
+    background-color: #ffffff;
+    color: #333333;
+  }
+}
+
+/* Loading/error message */
+
+.reader-message {
+  margin-top: 40px;
+  display: none;
+  text-align: center;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+/* Detector element to see if we're at the top of the doc or not. */
+.top-anchor {
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 5px;
+  pointer-events: none;
+}
+
+/* Header */
+
+.header {
+  text-align: start;
+  display: none;
+}
+
+.domain {
+  font-size: 0.9em;
+  line-height: 1.48em;
+  padding-bottom: 4px;
+  font-family: Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  border-bottom: 1px solid;
+  color: var(--link-foreground);
+}
+
+.header > h1 {
+  font-size: 1.6em;
+  line-height: 1.25em;
+  width: 100%;
+  margin: 30px 0;
+  padding: 0;
+}
+
+.header > .credits {
+  font-size: 0.9em;
+  line-height: 1.48em;
+  margin: 0 0 10px;
+  padding: 0;
+  font-style: italic;
+}
+
+.header > .meta-data {
+  font-size: 0.65em;
+  margin: 0 0 15px;
+}
+
+.reader-estimated-time {
+  text-align: match-parent;
+}
+
+/* Controls toolbar */
+
+.toolbar-container {
+  position: sticky;
+  z-index: 2;
+  top: 32px;
+  height: 0; /* take up no space, so body is at the top. */
+
+  /* As a stick container, we're positioned relative to the body. Move us to
+   * the edge of the viewport using margins, and take the width of
+   * the body padding into account for calculating our width.
+   */
+  margin-inline-start: calc(-1 * var(--body-padding));
+  width: max(var(--body-padding), calc((100% - var(--content-width)) / 2 + var(--body-padding)));
+  font-size: var(--font-size); /* Needed to ensure 'em' units match, is reset for .reader-controls */
+}
+
+.toolbar {
+  padding-block: 16px;
+  border: 1px solid var(--toolbar-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px var(--toolbar-box-shadow);
+
+  width: 32px; /* basic width, without padding/border */
+
+  /* padding should be 16px, except if there's not enough space for that, in
+   * which case use half the available space for padding (=25% on each side).
+   * The 34px here is the width + borders. We use a variable because we need
+   * to know this size for the margin calculation.
+   */
+  --inline-padding: min(16px, calc(25% - 0.25 * 34px));
+  padding-inline: var(--inline-padding);
+
+  /* Keep a maximum of 96px distance to the body, but center once the margin
+   * gets too small. We need to set the start margin, however...
+   * To center, we'd want 50% of the container, but we'd subtract half our
+   * own width (16px) and half the border (1px) and the inline padding.
+   * When the other margin would be 96px, we want 100% - 96px - the complete
+   * width of the actual toolbar (34px + 2 * padding)
+   */
+  margin-inline-start: max(calc(50% - 17px - var(--inline-padding)), calc(100% - 96px - 34px - 2 * var(--inline-padding)));
+
+  font-family: Helvetica, Arial, sans-serif;
+  list-style: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toolbar {
+    transition-property: border-color, box-shadow;
+    transition-duration: 250ms;
+  }
+
+  .toolbar .toolbar-button {
+    transition-property: opacity;
+    transition-duration: 250ms;
+  }
+
+  .toolbar-container.scrolled .toolbar:not(:hover, :focus-within) {
+    border-color: var(--toolbar-transparent-border);
+    box-shadow: 0 2px 8px transparent;
+  }
+
+  .toolbar-container.scrolled .toolbar:not(:hover, :focus-within) .toolbar-button {
+    opacity: 0.6;
+  }
+
+  .toolbar-container.transition-location {
+    transition-duration: 250ms;
+    transition-property: width;
+  }
+}
+
+.toolbar-container.overlaps .toolbar-button {
+  opacity: 0.1;
+}
+
+.dropdown-open .toolbar {
+  border-color: var(--toolbar-transparent-border);
+  box-shadow: 0 2px 8px transparent;
+}
+
+.reader-controls {
+  /* We use 'em's above this node to get it to the right size. However,
+   * the UI inside the toolbar should use a fixed, smaller size. */
+  font-size: 11px;
+}
+
+button {
+  -moz-context-properties: fill;
+  color: var(--font-color);
+  fill: var(--icon-fill);
+}
+
+button:disabled {
+  fill: var(--icon-disabled-fill);
+}
+
+.toolbar button::-moz-focus-inner {
+  border: 0;
+}
+
+.toolbar-button {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--toolbar-button-border);
+  border-radius: 4px;
+  margin: 4px 0;
+  background-color: var(--toolbar-button-background);
+  background-size: 16px 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.toolbar-button:hover,
+.toolbar-button:focus-visible {
+  background-color: var(--toolbar-button-background-hover);
+  border-color: var(--toolbar-button-border-hover);
+  fill: var(--toolbar-button-foreground-hover);
+}
+
+.open .toolbar-button,
+.toolbar-button:hover:active {
+  background-color: var(--toolbar-button-background-active);
+  border-color: var(--toolbar-button-border-active);
+  color: var(--toolbar-button-foreground-active);
+  fill: var(--toolbar-button-foreground-active);
+}
+
+.hover-label {
+  position: absolute;
+  top: 4px;
+  inset-inline-start: 36px;
+  line-height: 16px;
+  white-space: pre; /* make sure we don't wrap */
+  background-color: var(--tooltip-background);
+  color: var(--tooltip-foreground);
+  padding: 4px 8px;
+  border: 1px solid var(--tooltip-border);
+  border-radius: 2px;
+  visibility: hidden;
+  pointer-events: none;
+  /* Put above .dropdown .dropdown-popup, which has z-index: 1000. */
+  z-index: 1001;
+}
+
+/* Show the hover tooltip on non-dropdown buttons. */
+.toolbar-button:not(.dropdown-toggle):hover > .hover-label,
+.toolbar-button:not(.dropdown-toggle):focus-visible > .hover-label,
+/* Show the hover tooltip for dropdown buttons unless its dropdown is open. */
+:not(.open) > li > .dropdown-toggle:hover > .hover-label,
+:not(.open) > li > .dropdown-toggle:focus-visible > .hover-label {
+  visibility: visible;
+}
+
+.dropdown {
+  text-align: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.dropdown li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Popup */
+
+.dropdown .dropdown-popup {
+  text-align: start;
+  position: absolute;
+  inset-inline-start: 40px;
+  z-index: 1000;
+  background-color: var(--popup-background);
+  visibility: hidden;
+  border-radius: 4px;
+  border: 1px solid var(--popup-border);
+  box-shadow: 0 0 10px 0 var(--popup-shadow);
+  top: 0;
+}
+
+.open > .dropdown-popup {
+  visibility: visible;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  height: 24px;
+  width: 16px;
+  inset-inline-start: -16px;
+  background-image: url("chrome://global/skin/reader/RM-Type-Controls-Arrow.svg");
+  display: block;
+  -moz-context-properties: fill, stroke;
+  fill: var(--popup-background);
+  stroke: var(--opaque-popup-border);
+  pointer-events: none;
+}
+
+.dropdown-arrow:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+/* Align the style dropdown arrow (narrate does its own) */
+.style-dropdown .dropdown-arrow {
+  top: 7px;
+}
+
+/* Font style popup */
+
+.radio-button {
+  /* We visually hide these, but we keep them around so they can be focused
+   * and changed by interacting with them via the label, or the keyboard, or
+   * assistive technology.
+   */
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.radiorow,
+.buttonrow {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.content-width-value,
+.font-size-value,
+.line-height-value {
+  box-sizing: border-box;
+  width: 36px;
+  height: 20px;
+  line-height: 20px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+  border-radius: 10px;
+  border: 1px solid var(--font-value-border);
+  background-color: var(--popup-button-background);
+}
+
+.buttonrow > button {
+  border: 0;
+  height: 60px;
+  width: 90px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.buttonrow > button:enabled:hover,
+.buttonrow > button:enabled:focus-visible {
+  background-color: var(--popup-button-background-hover);
+  color: var(--popup-button-foreground-hover);
+  fill: var(--popup-button-foreground-hover);
+}
+
+.buttonrow > button:enabled:hover:active {
+  background-color: var(--popup-button-background-active);
+}
+
+.radiorow:not(:last-child),
+.buttonrow:not(:last-child) {
+  border-bottom: 1px solid var(--popup-line);
+}
+
+body.hcm .buttonrow.line-height-buttons {
+  /* On HCM the .color-scheme-buttons row is hidden, so remove the border from the row above it */
+  border-bottom: none;
+}
+
+.radiorow > label {
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 2px;
+  border: 2px solid var(--popup-border);
+}
+
+.radiorow > label[checked] {
+  border-color: var(--selected-border);
+}
+
+/* For the hover style, we draw a line under the item by means of a
+ * pseudo-element. Because these items are variable height, and
+ * because their contents are variable height, position it absolutely,
+ * and give it a width of 100% (the content width) + 4px for the 2 * 2px
+ * border width.
+ */
+.radiorow > input[type=radio]:focus-visible + label::after,
+.radiorow > label:hover::after {
+  content: "";
+  display: block;
+  border-bottom: 2px solid var(--selected-border);
+  width: calc(100% + 4px);
+  position: absolute;
+  /* to skip the 2 * 2px border + 2px spacing. */
+  bottom: -6px;
+  /* Match the start of the 2px border of the element: */
+  inset-inline-start: -2px;
+}
+
+.font-type-buttons > label {
+  height: 64px;
+  width: 105px;
+  /* Slightly more space between these items. */
+  margin: 10px;
+  /* Center the Sans-serif / Serif labels */
+  text-align: center;
+  background-size: 63px 39px;
+  background-repeat: no-repeat;
+  background-position: center 18px;
+  background-color: var(--popup-button-background);
+  fill: currentColor;
+  -moz-context-properties: fill;
+  /* This mostly matches baselines, but because of differences in font
+   * baselines between serif and sans-serif, this isn't always enough. */
+  line-height: 1;
+  padding-top: 2px;
+}
+
+.font-type-buttons > label[checked] {
+  background-color: var(--selected-background);
+}
+
+.sans-serif-button {
+  font-family: Helvetica, Arial, sans-serif;
+  background-image: url("chrome://global/skin/reader/RM-Sans-Serif.svg");
+}
+
+/* Tweak padding to match the baseline on mac */
+:root[platform=macosx] .sans-serif-button {
+  padding-top: 3px;
+}
+
+.serif-button {
+  font-family: Georgia, "Times New Roman", serif;
+  background-image: url("chrome://global/skin/reader/RM-Serif.svg");
+}
+
+body.hcm .color-scheme-buttons {
+  /* Disallow selecting themes when HCM is on. */
+  display: none;
+}
+
+.color-scheme-buttons > label {
+  padding: 12px;
+  height: 34px;
+  font-size: 12px;
+  /* Center the labels horizontally as well as vertically */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* We want 10px between items, but there's no margin collapsing in flexbox. */
+  margin: 10px 5px;
+}
+
+.color-scheme-buttons > input:first-child + label {
+  margin-inline-start: 10px;
+}
+
+.color-scheme-buttons > label:last-child {
+  margin-inline-end: 10px;
+}
+
+/* Toolbar icons */
+
+.close-button {
+  background-image: url("chrome://global/skin/icons/close.svg");
+}
+
+.style-button {
+  background-image: url("chrome://global/skin/reader/RM-Type-Controls-24x24.svg");
+}
+
+.minus-button {
+  background-size: 18px 18px;
+  background-image: url("chrome://global/skin/reader/RM-Minus-24x24.svg");
+}
+
+.plus-button {
+  background-size: 18px 18px;
+  background-image: url("chrome://global/skin/reader/RM-Plus-24x24.svg");
+}
+
+.content-width-minus-button {
+  background-size: 42px 16px;
+  background-image: url("chrome://global/skin/reader/RM-Content-Width-Minus-42x16.svg");
+}
+
+.content-width-plus-button {
+  background-size: 44px 16px;
+  background-image: url("chrome://global/skin/reader/RM-Content-Width-Plus-44x16.svg");
+}
+
+.line-height-minus-button {
+  background-size: 34px 14px;
+  background-image: url("chrome://global/skin/reader/RM-Line-Height-Minus-38x14.svg");
+}
+
+.line-height-plus-button {
+  background-size: 34px 24px;
+  background-image: url("chrome://global/skin/reader/RM-Line-Height-Plus-38x24.svg");
+}
+
+/* Mirror the line height buttons if the article is RTL. */
+.reader-controls[articledir="rtl"] .line-height-minus-button,
+.reader-controls[articledir="rtl"] .line-height-plus-button {
+  transform: scaleX(-1);
+}
+
+@media print {
+  .toolbar {
+    display: none !important;
+  }
+}
+
+/* Article content */
+
+/* Note that any class names from the original article that we want to match on
+ * must be added to CLASSES_TO_PRESERVE in ReaderMode.jsm, so that
+ * Readability.js doesn't strip them out */
+
+.container {
+  margin: 0 auto;
+  font-size: var(--font-size);
+  max-width: var(--content-width);
+  line-height: var(--line-height);
+}
+
+pre {
+  font-family: inherit;
+}
+
+.moz-reader-content {
+  display: none;
+  font-size: 1em;
+}
+
+@media print {
+  .moz-reader-content p,
+  .moz-reader-content code,
+  .moz-reader-content pre,
+  .moz-reader-content blockquote,
+  .moz-reader-content ul,
+  .moz-reader-content ol,
+  .moz-reader-content li,
+  .moz-reader-content figure,
+  .moz-reader-content .wp-caption {
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+  }
+}
+
+.moz-reader-content h1,
+.moz-reader-content h2,
+.moz-reader-content h3 {
+  font-weight: bold;
+}
+
+.moz-reader-content h1 {
+  font-size: 1.6em;
+  line-height: 1.25em;
+}
+
+.moz-reader-content h2 {
+  font-size: 1.2em;
+  line-height: 1.51em;
+}
+
+.moz-reader-content h3 {
+  font-size: 1em;
+  line-height: 1.66em;
+}
+
+.moz-reader-content a:link {
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+.moz-reader-content a:link,
+.moz-reader-content a:link:hover,
+.moz-reader-content a:link:active {
+  color: var(--link-foreground);
+}
+
+.moz-reader-content a:visited {
+  color: var(--visited-link-foreground);
+}
+
+.moz-reader-content * {
+  max-width: 100%;
+  height: auto;
+}
+
+.moz-reader-content p,
+.moz-reader-content p,
+.moz-reader-content code,
+.moz-reader-content pre,
+.moz-reader-content blockquote,
+.moz-reader-content ul,
+.moz-reader-content ol,
+.moz-reader-content li,
+.moz-reader-content figure,
+.moz-reader-content .wp-caption {
+  margin: -10px -10px 20px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.moz-reader-content li {
+  margin-bottom: 0;
+}
+
+.moz-reader-content li > ul,
+.moz-reader-content li > ol {
+  margin-bottom: -10px;
+}
+
+.moz-reader-content p > img:only-child,
+.moz-reader-content p > a:only-child > img:only-child,
+.moz-reader-content .wp-caption img,
+.moz-reader-content figure img {
+  display: block;
+}
+
+.moz-reader-content img[moz-reader-center] {
+  margin-inline: auto;
+}
+
+.moz-reader-content .caption,
+.moz-reader-content .wp-caption-text
+.moz-reader-content figcaption {
+  font-size: 0.9em;
+  line-height: 1.48em;
+  font-style: italic;
+}
+
+.moz-reader-content pre {
+  white-space: pre-wrap;
+}
+
+.moz-reader-content blockquote {
+  padding: 0;
+  padding-inline-start: 16px;
+}
+
+.moz-reader-content ul,
+.moz-reader-content ol {
+  padding: 0;
+}
+
+.moz-reader-content ul {
+  padding-inline-start: 30px;
+  list-style: disc;
+}
+
+.moz-reader-content ol {
+  padding-inline-start: 30px;
+}
+
+table,
+th,
+td {
+  border: 1px solid currentColor;
+  border-collapse: collapse;
+  padding: 6px;
+  vertical-align: top;
+}
+
+table {
+  margin: 5px;
+}
+
+/* Visually hide (but don't display: none) screen reader elements */
+.moz-reader-content .visually-hidden,
+.moz-reader-content .visuallyhidden,
+.moz-reader-content .sr-only {
+  display: inline-block;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  border-width: 0;
+}
+
+/* Hide elements with common "hidden" class names */
+.moz-reader-content .hidden,
+.moz-reader-content .invisible {
+  display: none;
+}
+
+/* Enforce wordpress and similar emoji/smileys aren't sized to be full-width,
+ * see bug 1399616 for context. */
+.moz-reader-content img.wp-smiley,
+.moz-reader-content img.emoji {
+  display: inline-block;
+  border-width: 0;
+  /* height: auto is implied from '.moz-reader-content *' rule. */
+  width: 1em;
+  margin: 0 .07em;
+  padding: 0;
+}
+
+.reader-show-element {
+  display: initial;
+}
+
+/* Provide extra spacing for images that may be aided with accompanying element such as <figcaption> */
+.moz-reader-block-img:not(:last-child) {
+  margin-block-end: 12px;
+}
+
+.moz-reader-wide-table {
+  overflow-x: auto;
+  display: block;
+}
+
+pre code {
+  background-color: var(--main-background);
+  border: 1px solid var(--font-color);
+  display: block;
+  overflow: auto;
+}</style></head>
+<body class="moz-reader-content content-width6 reader-show-element sans-serif container line-height4" style="display: block; padding: 24px;"><h1 class=reader-title>JavaScript and memory leaks</h1><div id=readability-page-1 class=page><div id=contentwrapper>
+ <h3>JavaScript and memory leaks</h3>
+ <p><em><strong>Credits:</strong> This tutorial is written by
+ Volkan. He runs the site </em><a href=http://sarmal.com/>Sarmal.com</a>, 
+ a bilingual site featuring all his work,&nbsp;products, services,&nbsp;and up-to-date 
+ profile information in English and Turkish. </p>
+ <p>If you are developing client-side re-usable scripting objects, sooner or 
+ later you will find yourself spotting out memory leaks. Chances are that 
+ your browser will suck memory like a sponge and you will hardly be able to 
+ find a reason why your lovely <b>DHTML</b> navigation's responsiveness 
+ decreases severely after visiting a couple of pages within your site.</p>
+ <p>A Microsoft developer <b>Justing Rogers</b> has described IE leak 
+ patterns
+ <a target=_blank href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/IETechCol/dnwebgen/ie_leak_patterns.asp">
+ in his excellent article</a>.</p>
+ <p>In this article, we will review those patterns from a slightly different 
+ perspective and support it with diagrams and memory utilization graphs. We 
+ will also introduce several subtler leak scenarios. Before we begin, I 
+ strongly recommend you to read that article if you have not already read.</p>
+ <h4><img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"><rect fill-opacity="0"/></svg>' width=16 height=17> Why does the memory leak?</h4>
+ <p>The problem of memory leakage is not just limited to Internet Explorer.
+ <a target=_blank href=http://www.volkanozcelik.com/volkanozcelik/blog/2005/10/help-my-browser-leaks-memory.html>
+ Almost any browser</a> (including but not limited to Mozilla, Netscape and 
+ Opera) will leak memory if you provide adequate conditions (and it is not 
+ that hard to do so, as we will see shortly). But (in my humble opinion, ymmv 
+ etc.) Internet Explorer is the king of leakers.</p>
+ <p>Don't get me wrong. I do not belong to the crowd yelling "Hey IE has 
+ memory leaks, checkout this new tool [link-to-tool] and see for yourself". 
+ Let us discuss how crappy Internet Explorer is and cover up all the flaws in 
+ other browsers".</p>
+ <p>Each browser has its own strengths and weaknesses. For instance, Mozilla 
+ consumes too much of memory at initial boot, it is not good in string and 
+ array operations; Opera may crash if you write a ridiculously complex DHTML 
+ script which confuses its rendering engine.</p>
+ <p>Although we will be focusing on the memory leaking situations in Internet 
+ Explorer, this discussion is equally applicable to other browsers.</p>
+ <h4><img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"><rect fill-opacity="0"/></svg>' width=16 height=17> A simple beginning</h4>
+ <p>Let us begin with a simple example:</p>
+ <div id=highlighter_267407><table><tbody><tr><td><p>1<p>2<p>3<p>4<p>5<p>6<p>7<p>8<p>9<p>10<p>11<p>12<p>13<p>14<p>15<p>16<p>17<p>18<p>19</p><td><div><p><code>[Exhibit 1 - Memory leaking insert due to inline script]</code><p><code>&lt;html&gt;</code><p><code>&lt;head&gt;</code><p><code>&lt;script type=</code><code>"text/javascript"</code><code>&gt;</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>function</code> <code>LeakMemory(){</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>var</code> <code>parentDiv = </code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>document.createElement(</code><code>"&lt;div onclick='foo()'&gt;"</code><code>);</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>parentDiv.bigString = </code><code>new</code> <code>Array(1000).join(</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>new</code> <code>Array(2000).join(</code><code>"XXXXX"</code><code>));</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>}</code><p><code>&lt;/script&gt;</code><p><code>&lt;/head&gt;</code><p><code>&lt;body&gt;</code><p><code>&lt;input type=</code><code>"button"</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>value=</code><code>"Memory Leaking Insert"</code> <code>onclick=</code><code>"LeakMemory()"</code> <code>/&gt;</code><p><code>&lt;/body&gt;</code><p><code>&lt;/html&gt;</code></p></div></table></div>
+ <p>The first assignment <code>
+ parentDiv=document.createElement(...);</code> will create a
+ <code>div</code> element and create a temporary scope for it 
+ where the scripting object resides. The second assignment <code>
+ parentDiv.bigString=...</code> attaches a large object to <code>parentDiv</code>. 
+ When <code>LeakMemory()</code> method is called, a <b>DOM</b> element will 
+ be created within the scope of this function, a very large object will be 
+ attached to it as a member property and the <b>DOM</b> element will be 
+ de-allocated and removed from memory as soon as the function exits, since it 
+ is an object created within the local scope of the function.</p>
+ <p>When you run the example and click the button a few times, your memory 
+ graph will probably look like this:</p>
+ <p>
+ <img height=423 src="data:image/gif;base64,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etxHsi3bjnJHDoR70G7Ck3FSPmO5dUlZnV+9Bi7cFQraiug+1p371nFjuownu4382ItVY33rtAR8eLBhwmA/n9XKM9RdyJTjSq68OnVr1pdnZ9p7dTOVzjAC5wx90/dgmIlPr4VN+3Ve1a6Xy7bsHHnIRZk/YU2b/0qVy+KgRxOuqb00PXbRmBt/Tj557PLQTSpvvn7EdD/VFet+YjYmcJyC9ws3LR41esedF5157g3IXnoBFqieI/HVMR9x3020X35m6UfaMcP9JyFeBL7XHoMGihgiiQp+iJltmq3E2V943BecWBhaOKOGD3EIookHdoiggCPm6KOHOmrhIBUQbihhEy9eGKNX/DXZX3g2YldikEDyuOCPVF55Yo9a6hWlfLj5N6WLFHpHJow36VQjNABW6SWOb2Y5p5x1bilkgrYQqU5WYF4kEaC7senXjXneaeWOicZ5KJyGKoqin0WKGamFgVqa4ZhtukMVp516+imooYo6KqlL7f9JU59/uHmppTsdmQCXWNr5aJd0MmorrbJueeqZ1uHGKrDgqfrqn4gummusyeJZ66zHQqmWiqlCi2awErkqJazL6oqstsoa66izkvHakLTXZVttq4OyWCiztzYLLrztcvutvM+a++Ckwyq2L7/9Tnvvuv4KPDDBBRt8MMIJK7www+PCmu+/CgAwMcUVW3wxxhlrvDHHFmdKqBAdizwyySWbfDLKKau8Msstu/zyyZSi6uuKDdscIbY367wzzz37/DPQOeNb88dB+0xzuUYrvTTTTTvNMM1GCv10w0gjTTXWWWu9NdBRQwww1wZbHTbZZZt9NsJeEy0z2vuO3TbccctO3bbaSa89N8hT4703333vXPfVftMnOOGFG/4z4DzBvDjjHovXOOSRSz455ZVbfrnIfN19OOede/751lKDPjrppZu+s+inq746660PHUABADs=" width=460></p>
+ <h4><img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"><rect fill-opacity="0"/></svg>' width=16 height=17> Increasing the frequency</h4>
+ <p>No visible leak huh? What if we do this a few hundred times instead of 
+ twenty, or a few thousand times? Will it be the same? The following code 
+ calls the assignment over and over again to accomplish this goal:</p>
+ <div id=highlighter_61041><table><tbody><tr><td><p>1<p>2<p>3<p>4<p>5<p>6<p>7<p>8<p>9<p>10<p>11<p>12<p>13<p>14<p>15<p>16<p>17<p>18</p><td><div><p><code>[Exhibit 2 - Memory leaking insert (frequency increased) ]</code><p><code>&lt;html&gt;</code><p><code>&lt;head&gt;</code><p><code>&lt;script type=</code><code>"text/javascript"</code><code>&gt;</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>function</code> <code>LeakMemory(){</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>for</code><code>(i = 0; i &lt; 5000; i++){</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>var</code> <code>parentDiv = </code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>document.createElement(</code><code>"&lt;div onClick='foo()'&gt;"</code><code>);</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>}</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>}</code><p><code>&lt;/script&gt;</code><p><code>&lt;/head&gt;</code><p><code>&lt;body&gt;</code><p><code>&lt;input type=</code><code>"button"</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>value=</code><code>"Memory Leaking Insert"</code> <code>onclick=</code><code>"LeakMemory()"</code> <code>/&gt;</code><p><code>&lt;/body&gt;</code><p><code>&lt;/html&gt;</code></p></div></table></div>
+ <p>And here follows the corresponding graph:</p>
+ <p>
+ <img height=423 src="data:image/gif;base64,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" width=460></p>
+ <p>The ramp in the memory usage indicates leak in memory. The horizontal 
+ line (the last 20 seconds) at the end of the ramp is the memory after 
+ refreshing the page and loading another (about:blank) page. This shows that 
+ the leak is an actual leak and not a <i>pseudo leak</i>. The memory will not 
+ be reclaimed unless the browser window and other dependant windows if any 
+ are closed.</p>
+ <p>Assume you have a dozen pages that have similar leakage graph. After a 
+ few hours, you may want to restart your browser (or even your PC) because it 
+ just stops responding. The naughty browser is eating up all your resources. 
+ However, this is an extreme case because Windows will increase the virtual 
+ memory size as soon as your memory consumption reaches a certain level.</p>
+ <p>This is not a pretty scenario. Your client/boss will not be very happy, 
+ if they discover such a situation in the middle of a product 
+ showcase/training/demo.</p>
+ <p>A careful eye may have caught that there is no <b>bigString</b> in the 
+ second example. This means that the leak is merely because of the internal 
+ scripting object (i.e. the anonymous script <code>onclick='foo()'</code>). 
+ This script was not deallocated properly. This caused memory leak at each 
+ iteration. To prove our thesis let us run a slightly different test case:</p>
+ <div id=highlighter_760896><table><tbody><tr><td><p>1<p>2<p>3<p>4<p>5<p>6<p>7<p>8<p>9<p>10<p>11<p>12<p>13<p>14<p>15<p>16<p>17<p>18</p><td><div><p><code>[Exhibit 3 - Leak test without inline script attached]</code><p><code>&lt;html&gt;</code><p><code>&lt;head&gt;</code><p><code>&lt;script type=</code><code>"text/javascript"</code><code>&gt;</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>function</code> <code>LeakMemory(){</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>for</code><code>(i = 0; i &lt; 50000; i++){</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>var</code> <code>parentDiv = </code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>document.createElement(</code><code>"div"</code><code>);</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>}</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>}</code><p><code>&lt;/script&gt;</code><p><code>&lt;/head&gt;</code><p><code>&lt;body&gt;</code><p><code>&lt;input type=</code><code>"button"</code><p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>value=</code><code>"Memory Leaking Insert"</code> <code>onclick=</code><code>"LeakMemory()"</code> <code>/&gt;</code><p><code>&lt;/body&gt;</code><p><code>&lt;/html&gt;</code></p></div></table></div>
+ <p>And here follows the corresponding memory graph:</p>
+ <p>
+ <img height=423 src="data:image/gif;base64,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" width=460></p>
+ <p>As you can see, we have done fifty thousand iterations instead of 5000, 
+ and still the memory usage is flat (i.e. no leaks). The slight ramp is due 
+ to some other process in my PC.</p>
+ <p>Let us change our code in a more standard and somewhat unobtrusive manner 
+ (not the correct term here, but can't find a better one) without embedded 
+ inline scripts and re-test it.</p>
+ <ul id=toc>
+ <li>JavaScript and memory leaks</li>
+ <li><a href=http://www.javascriptkit.com/javatutors/closuresleak/index2.shtml>Introducing the closure</a></li>
+ <li><a href=http://www.javascriptkit.com/javatutors/closuresleak/index3.shtml>More leakage patterns</a></li>
+ <li><a href=http://www.javascriptkit.com/javatutors/closuresleak/index4.shtml>Conclusion</a></li>
+ </ul>
+ 
+ </div></div><style>.single-file-highlight-yellow, .single-file-highlight-yellow-mode ::selection { background-color: #ffff7c !important; color: black !important; } .single-file-highlight-pink, .single-file-highlight-pink-mode ::selection { background-color: #ffbbb6 !important; color: black !important; } .single-file-highlight-blue, .single-file-highlight-blue-mode ::selection { background-color: #95d0ff !important; color: black !important; } .single-file-highlight-green, .single-file-highlight-green-mode ::selection { background-color: #93ef8d !important; color: black !important; } span.single-file-highlight-yellow, span.single-file-highlight-pink, span.single-file-highlight-blue, span.single-file-highlight-green { display: inline !important; } .single-file-highlight-hidden { background-color: inherit !important; color: inherit !important; } .single-file-mask { all: initial; display: contents !important; } .single-file-mask.single-file-page-mask { opacity: .99 !important; } single-file-note { all: initial !important; display: contents !important; } .single-file-cut-hover, .single-file-cut-outer-hover, .single-file-cut-selected, .single-file-cut-outer-selected { transition: outline-width 125ms !important; outline-offset: -4px !important; outline-width: 4px !important; } .single-file-cut-hover, .single-file-cut-outer-hover { outline-style: dotted !important; } .single-file-cut-selected, .single-file-cut-outer-selected { outline-style: dashed !important; } .single-file-cut-hover, .single-file-cut-selected { outline-color: red !important; } .single-file-cut-outer-hover, .single-file-cut-outer-selected { outline-color: green !important; } .single-file-cut-mode, .single-file-cut-mode * { pointer-events: auto !important; touch-action: none !important; } .single-file-cut-hover, .single-file-cut-outer-hover, .single-file-remove-highlights-mode .single-file-highlight:hover { cursor: crosshair !important; } .single-file-removed { display: none !important; float: none !important; position: static !important; visibility: collapse !important; } a[href], img { -webkit-touch-callout: none; }</style><script data-template-shadow-root>(() => { document.currentScript.remove(); const processNode = node => { node.querySelectorAll("template[shadowroot]").forEach(element=>{ let shadowRoot = getShadowRoot(element.parentElement); if (!shadowRoot) { try { shadowRoot = element.parentElement.attachShadow({mode:element.getAttribute("shadowroot")}); shadowRoot.innerHTML = element.innerHTML; element.remove(); } catch (error) {} if (shadowRoot) { processNode(shadowRoot); } } }) }; const FORBIDDEN_TAG_NAMES = ["a","area","audio","base","br","col","command","embed","hr","img","iframe","input","keygen","link","meta","param","source","track","video","wbr"]; const NOTE_TAGNAME = "single-file-note"; const NOTE_CLASS = "note"; const NOTE_ANCHORED_CLASS = "note-anchored"; const NOTE_SELECTED_CLASS = "note-selected"; const NOTE_MOVING_CLASS = "note-moving"; const NOTE_MASK_MOVING_CLASS = "note-mask-moving"; const MASK_CLASS = "single-file-mask"; const HIGHLIGHT_CLASS = "single-file-highlight"; const NOTES_WEB_STYLESHEET = ".note { all: initial; display: flex; flex-direction: column; height: 150px; width: 150px; position: absolute; top: 10px; left: 10px; border: 1px solid rgb(191, 191, 191); z-index: 2147483646; box-shadow: 3px 3px 3px rgba(33, 33, 33, .7); min-height: 100px; min-width: 100px; } .note-selected { z-index: 2147483647; } .note-hidden { display: none; } .note-collapsed { min-height: 30px; max-height: 30px; overflow: hidden; } .note blockquote { all: initial; padding: 1px; height: 100%; } .note textarea { all: initial; white-space: break-spaces; font-family: Arial, Helvetica, sans-serif; font-size: 14px; height: 100%; width: 100%; padding: 2px; border: 1px solid transparent; resize: none; color: black; } .note textarea:focus { border: 1px dotted rgb(160, 160, 160); } .note header { all: initial; min-height: 30px; cursor: grab; user-select: none; } .note .note-remove { all: initial; position: absolute; right: 0px; top: 2px; padding: 5px; opacity: .5; cursor: pointer; user-select: none; width: 16px; height: 16px; } .note .note-anchor { all: initial; position: absolute; left: 0px; top: 2px; padding: 5px; opacity: .25; cursor: pointer; width: 16px; height: 16px; } .note .note-resize { all: initial; position: absolute; bottom: -5px; right: -5px; height: 15px; width: 15px; cursor: nwse-resize; user-select: none; } .note .note-remove:hover { opacity: 1; } .note .note-anchor:hover { opacity: .5; } .note-anchored .note-anchor { opacity: .5; } .note-anchored .note-anchor:hover { opacity: 1; } .note-moving { opacity: .75; box-shadow: 6px 6px 3px rgba(33, 33, 33, .7); } .note-moving * { cursor: grabbing; } .note-yellow header { background-color: #f5f545; } .note-yellow blockquote { background-color: #ffff7c; } .note-pink header { background-color: #ffa59f; } .note-pink blockquote { background-color: #ffbbb6; } .note-blue header { background-color: #84c8ff; } .note-blue blockquote { background-color: #95d0ff; } .note-green header { background-color: #93ef8d; } .note-green blockquote { background-color: #9cff95; }"; const MASK_WEB_STYLESHEET = ".note-mask { all: initial; position: fixed; z-index: 2147483645; pointer-events: none; background-color: transparent; transition: background-color 125ms; } .note-mask-moving.note-yellow { background-color: rgba(255, 255, 124, .3); } .note-mask-moving.note-pink { background-color: rgba(255, 187, 182, .3); } .note-mask-moving.note-blue { background-color: rgba(149, 208, 255, .3); } .note-mask-moving.note-green { background-color: rgba(156, 255, 149, .3); } .page-mask { all: initial; position: fixed; top: 0; left: 0; width: 0; height: 0; z-index: 2147483646; } .page-mask-active { width: 100vw; height: 100vh; }"; const NOTE_HEADER_HEIGHT = 25; const PAGE_MASK_ACTIVE_CLASS = "page-mask-active"; const REMOVED_CONTENT_CLASS = "single-file-removed"; const reflowNotes = function reflowNotes() { document.querySelectorAll(NOTE_TAGNAME).forEach(containerElement => { const noteElement = containerElement.shadowRoot.querySelector("." + NOTE_CLASS); const noteBoundingRect = noteElement.getBoundingClientRect(); const anchorElement = getAnchorElement(containerElement); const anchorBoundingRect = anchorElement.getBoundingClientRect(); const maxX = anchorBoundingRect.x + Math.max(0, anchorBoundingRect.width - noteBoundingRect.width); const minX = anchorBoundingRect.x; const maxY = anchorBoundingRect.y + Math.max(0, anchorBoundingRect.height - NOTE_HEADER_HEIGHT); const minY = anchorBoundingRect.y; let left = parseInt(noteElement.style.getPropertyValue("left")); let top = parseInt(noteElement.style.getPropertyValue("top")); if (noteBoundingRect.x > maxX) { left -= noteBoundingRect.x - maxX; } if (noteBoundingRect.x < minX) { left += minX - noteBoundingRect.x; } if (noteBoundingRect.y > maxY) { top -= noteBoundingRect.y - maxY; } if (noteBoundingRect.y < minY) { top += minY - noteBoundingRect.y; } noteElement.style.setProperty("position", "absolute"); noteElement.style.setProperty("left", left + "px"); noteElement.style.setProperty("top", top + "px"); }); }; const addNoteRef = function addNoteRef(anchorElement, noteId) { const noteRefs = getNoteRefs(anchorElement); noteRefs.push(noteId); setNoteRefs(anchorElement, noteRefs); }; const deleteNoteRef = function deleteNoteRef(containerElement, noteId) { const anchorElement = getAnchorElement(containerElement); const noteRefs = getNoteRefs(anchorElement).filter(noteRefs => noteRefs != noteId); if (noteRefs.length) { setNoteRefs(anchorElement, noteRefs); } else { delete anchorElement.dataset.singleFileNoteRefs; } }; const getNoteRefs = function getNoteRefs(anchorElement) { return anchorElement.dataset.singleFileNoteRefs ? anchorElement.dataset.singleFileNoteRefs.split(" ") : []; }; const setNoteRefs = function setNoteRefs(anchorElement, noteRefs) { anchorElement.dataset.singleFileNoteRefs = noteRefs.join(" "); }; const getAnchorElement = function getAnchorElement(containerElement) { return document.querySelector("[data-single-file-note-refs~=\"" + containerElement.dataset.noteId + "\"]") || document.documentElement; }; const getMaskElement = function getMaskElement(className, containerClassName) { let maskElement = document.documentElement.querySelector("." + className); if (!maskElement) { maskElement = document.createElement("div"); const maskContainerElement = document.createElement("div"); if (containerClassName) { maskContainerElement.classList.add(containerClassName); } maskContainerElement.classList.add(MASK_CLASS); const firstNote = document.querySelector(NOTE_TAGNAME); if (firstNote && firstNote.parentElement == document.documentElement) { document.documentElement.insertBefore(maskContainerElement, firstNote); } else { document.documentElement.appendChild(maskContainerElement); } maskElement.classList.add(className); const maskShadow = maskContainerElement.attachShadow({ mode: "open" }); maskShadow.appendChild(getStyleElement(MASK_WEB_STYLESHEET)); maskShadow.appendChild(maskElement); return maskElement; } }; const getStyleElement = function getStyleElement(stylesheet) { const linkElement = document.createElement("style"); linkElement.textContent = stylesheet; return linkElement; }; const attachNoteListeners = function attachNoteListeners(containerElement, editable = false) { const SELECT_PX_THRESHOLD = 4; const COLLAPSING_NOTE_DELAY = 750; const noteShadow = containerElement.shadowRoot; const noteElement = noteShadow.childNodes[1]; const headerElement = noteShadow.querySelector("header"); const mainElement = noteShadow.querySelector("textarea"); const noteId = containerElement.dataset.noteId; const resizeElement = noteShadow.querySelector(".note-resize"); const anchorIconElement = noteShadow.querySelector(".note-anchor"); const removeNoteElement = noteShadow.querySelector(".note-remove"); mainElement.readOnly = !editable; if (!editable) { anchorIconElement.style.setProperty("display", "none", "important"); } else { anchorIconElement.style.removeProperty("display"); } headerElement.ontouchstart = headerElement.onmousedown = event => { if (event.target == headerElement) { collapseNoteTimeout = setTimeout(() => { noteElement.classList.toggle("note-collapsed"); hideMaskNote(); }, COLLAPSING_NOTE_DELAY); event.preventDefault(); const position = getPosition(event); const clientX = position.clientX; const clientY = position.clientY; const boundingRect = noteElement.getBoundingClientRect(); const deltaX = clientX - boundingRect.left; const deltaY = clientY - boundingRect.top; maskPageElement.classList.add(PAGE_MASK_ACTIVE_CLASS); document.documentElement.style.setProperty("user-select", "none", "important"); anchorElement = getAnchorElement(containerElement); displayMaskNote(); selectNote(noteElement); moveNote(event, deltaX, deltaY); movingNoteMode = { event, deltaX, deltaY }; document.documentElement.ontouchmove = document.documentElement.onmousemove = event => { clearTimeout(collapseNoteTimeout); if (!movingNoteMode) { movingNoteMode = { deltaX, deltaY }; } movingNoteMode.event = event; moveNote(event, deltaX, deltaY); }; } }; resizeElement.ontouchstart = resizeElement.onmousedown = event => { event.preventDefault(); resizingNoteMode = true; selectNote(noteElement); maskPageElement.classList.add(PAGE_MASK_ACTIVE_CLASS); document.documentElement.style.setProperty("user-select", "none", "important"); document.documentElement.ontouchmove = document.documentElement.onmousemove = event => { event.preventDefault(); const { clientX, clientY } = getPosition(event); const boundingRectNote = noteElement.getBoundingClientRect(); noteElement.style.width = clientX - boundingRectNote.left + "px"; noteElement.style.height = clientY - boundingRectNote.top + "px"; }; }; anchorIconElement.ontouchend = anchorIconElement.onclick = event => { event.preventDefault(); noteElement.classList.toggle(NOTE_ANCHORED_CLASS); if (!noteElement.classList.contains(NOTE_ANCHORED_CLASS)) { deleteNoteRef(containerElement, noteId); addNoteRef(document.documentElement, noteId); } onUpdate(false); }; removeNoteElement.ontouchend = removeNoteElement.onclick = event => { event.preventDefault(); deleteNoteRef(containerElement, noteId); containerElement.remove(); }; noteElement.onmousedown = () => { selectNote(noteElement); }; function moveNote(event, deltaX, deltaY) { event.preventDefault(); const { clientX, clientY } = getPosition(event); noteElement.classList.add(NOTE_MOVING_CLASS); if (editable) { if (noteElement.classList.contains(NOTE_ANCHORED_CLASS)) { deleteNoteRef(containerElement, noteId); anchorElement = getTarget(clientX, clientY) || document.documentElement; addNoteRef(anchorElement, noteId); } else { anchorElement = document.documentElement; } } document.documentElement.insertBefore(containerElement, maskPageElement.getRootNode().host); noteElement.style.setProperty("left", (clientX - deltaX) + "px"); noteElement.style.setProperty("top", (clientY - deltaY) + "px"); noteElement.style.setProperty("position", "fixed"); displayMaskNote(); } function displayMaskNote() { if (anchorElement == document.documentElement || anchorElement == document.documentElement) { hideMaskNote(); } else { const boundingRectAnchor = anchorElement.getBoundingClientRect(); maskNoteElement.classList.add(NOTE_MASK_MOVING_CLASS); if (selectedNote) { maskNoteElement.classList.add(selectedNote.dataset.color); } maskNoteElement.style.setProperty("top", (boundingRectAnchor.y - 3) + "px"); maskNoteElement.style.setProperty("left", (boundingRectAnchor.x - 3) + "px"); maskNoteElement.style.setProperty("width", (boundingRectAnchor.width + 3) + "px"); maskNoteElement.style.setProperty("height", (boundingRectAnchor.height + 3) + "px"); } } function hideMaskNote() { maskNoteElement.classList.remove(NOTE_MASK_MOVING_CLASS); if (selectedNote) { maskNoteElement.classList.remove(selectedNote.dataset.color); } } function selectNote(noteElement) { if (selectedNote) { selectedNote.classList.remove(NOTE_SELECTED_CLASS); maskNoteElement.classList.remove(selectedNote.dataset.color); } noteElement.classList.add(NOTE_SELECTED_CLASS); noteElement.classList.add(noteElement.dataset.color); selectedNote = noteElement; } function getTarget(clientX, clientY) { const targets = Array.from(document.elementsFromPoint(clientX, clientY)).filter(element => element.matches("html *:not(" + NOTE_TAGNAME + "):not(." + MASK_CLASS + ")")); if (!targets.includes(document.documentElement)) { targets.push(document.documentElement); } let newTarget, target = targets[0], boundingRect = target.getBoundingClientRect(); newTarget = determineTargetElement("floor", target, clientX - boundingRect.left, getMatchedParents(target, "left")); if (newTarget == target) { newTarget = determineTargetElement("ceil", target, boundingRect.left + boundingRect.width - clientX, getMatchedParents(target, "right")); } if (newTarget == target) { newTarget = determineTargetElement("floor", target, clientY - boundingRect.top, getMatchedParents(target, "top")); } if (newTarget == target) { newTarget = determineTargetElement("ceil", target, boundingRect.top + boundingRect.height - clientY, getMatchedParents(target, "bottom")); } target = newTarget; while (boundingRect = target && target.getBoundingClientRect(), boundingRect && boundingRect.width <= SELECT_PX_THRESHOLD && boundingRect.height <= SELECT_PX_THRESHOLD) { target = target.parentElement; } return target; } function getMatchedParents(target, property) { let element = target, matchedParent, parents = []; do { const boundingRect = element.getBoundingClientRect(); if (element.parentElement && !element.parentElement.tagName.toLowerCase() != NOTE_TAGNAME && !element.classList.contains(MASK_CLASS)) { const parentBoundingRect = element.parentElement.getBoundingClientRect(); matchedParent = Math.abs(parentBoundingRect[property] - boundingRect[property]) <= SELECT_PX_THRESHOLD; if (matchedParent) { if (element.parentElement.clientWidth > SELECT_PX_THRESHOLD && element.parentElement.clientHeight > SELECT_PX_THRESHOLD && ((element.parentElement.clientWidth - element.clientWidth > SELECT_PX_THRESHOLD) || (element.parentElement.clientHeight - element.clientHeight > SELECT_PX_THRESHOLD))) { parents.push(element.parentElement); } element = element.parentElement; } } else { matchedParent = false; } } while (matchedParent && element); return parents; } function determineTargetElement(roundingMethod, target, widthDistance, parents) { if (Math[roundingMethod](widthDistance / SELECT_PX_THRESHOLD) <= parents.length) { target = parents[parents.length - Math[roundingMethod](widthDistance / SELECT_PX_THRESHOLD) - 1]; } return target; } }; const anchorNote = function anchorNote(event, noteElement, deltaX, deltaY) { event.preventDefault(); const { clientX, clientY } = getPosition(event); document.documentElement.style.removeProperty("user-select"); noteElement.classList.remove(NOTE_MOVING_CLASS); maskNoteElement.classList.remove(NOTE_MASK_MOVING_CLASS); maskPageElement.classList.remove(PAGE_MASK_ACTIVE_CLASS); maskNoteElement.classList.remove(noteElement.dataset.color); const headerElement = noteElement.querySelector("header"); headerElement.ontouchmove = document.documentElement.onmousemove = null; let currentElement = anchorElement; let positionedElement; while (currentElement.parentElement && !positionedElement) { if (!FORBIDDEN_TAG_NAMES.includes(currentElement.tagName.toLowerCase())) { const currentElementStyle = getComputedStyle(currentElement); if (currentElementStyle.position != "static") { positionedElement = currentElement; } } currentElement = currentElement.parentElement; } if (!positionedElement) { positionedElement = document.documentElement; } const containerElement = noteElement.getRootNode().host; if (positionedElement == document.documentElement) { const firstMaskElement = document.querySelector("." + MASK_CLASS); firstMaskElement.parentElement.insertBefore(containerElement, firstMaskElement); } else { positionedElement.appendChild(containerElement); } const boundingRectPositionedElement = positionedElement.getBoundingClientRect(); const stylePositionedElement = window.getComputedStyle(positionedElement); const borderX = parseInt(stylePositionedElement.getPropertyValue("border-left-width")); const borderY = parseInt(stylePositionedElement.getPropertyValue("border-top-width")); noteElement.style.setProperty("position", "absolute"); noteElement.style.setProperty("left", (clientX - boundingRectPositionedElement.x - deltaX - borderX) + "px"); noteElement.style.setProperty("top", (clientY - boundingRectPositionedElement.y - deltaY - borderY) + "px"); }; const getPosition = function getPosition(event) { if (event.touches && event.touches.length) { const touch = event.touches[0]; return touch; } else { return event; } }; const onMouseUp = function onMouseUp(event) { if (highlightSelectionMode) { event.preventDefault(); highlightSelection(); onUpdate(false); } if (removeHighlightMode) { event.preventDefault(); let element = event.target, done; while (element && !done) { if (element.classList.contains(HIGHLIGHT_CLASS)) { document.querySelectorAll("." + HIGHLIGHT_CLASS + "[data-singlefile-highlight-id=" + JSON.stringify(element.dataset.singlefileHighlightId) + "]").forEach(highlightedElement => { resetHighlightedElement(highlightedElement); onUpdate(false); }); done = true; } element = element.parentElement; } } if (resizingNoteMode) { event.preventDefault(); resizingNoteMode = false; document.documentElement.style.removeProperty("user-select"); maskPageElement.classList.remove(PAGE_MASK_ACTIVE_CLASS); document.documentElement.ontouchmove = onTouchMove; document.documentElement.onmousemove = null; onUpdate(false); } if (movingNoteMode) { event.preventDefault(); anchorNote(movingNoteMode.event || event, selectedNote, movingNoteMode.deltaX, movingNoteMode.deltaY); movingNoteMode = null; document.documentElement.ontouchmove = onTouchMove; document.documentElement.onmousemove = null; onUpdate(false); } if ((cuttingMode || cuttingOuterMode) && cuttingPath) { event.preventDefault(); if (event.ctrlKey) { const element = cuttingPath[cuttingPathIndex]; element.classList.toggle(cuttingMode ? CUT_SELECTED_CLASS : CUT_OUTER_SELECTED_CLASS); } else { validateCutElement(event.shiftKey); } } if (collapseNoteTimeout) { clearTimeout(collapseNoteTimeout); collapseNoteTimeout = null; } }; const getShadowRoot = function getShadowRoot(element) { const chrome = window.chrome; if (element.openOrClosedShadowRoot) { return element.openOrClosedShadowRoot; } else if (chrome && chrome.dom && chrome.dom.openOrClosedShadowRoot) { try { return chrome.dom.openOrClosedShadowRoot(element); } catch (error) { return element.shadowRoot; } } else { return element.shadowRoot; } }; const maskNoteElement = getMaskElement("note-mask"); const maskPageElement = getMaskElement("page-mask", "single-file-page-mask"); let selectedNote, highlightSelectionMode, removeHighlightMode, resizingNoteMode, movingNoteMode, collapseNoteTimeout, cuttingMode, cuttingOuterMode; window.onresize = reflowNotes; window.onUpdate = () => {}; document.documentElement.onmouseup = document.documentElement.ontouchend = onMouseUp; processNode(document); reflowNotes(); document.querySelectorAll("single-file-note").forEach(noteElement => attachNoteListeners(noteElement)); })()</script>
