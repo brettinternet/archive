@@ -1,0 +1,1023 @@
+<!DOCTYPE html> <html lang=en-US style><!--
+ Page saved with SingleFile 
+ url: https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/ 
+ saved date: Sun Aug 20 2023 12:05:47 GMT-0600 (Mountain Daylight Time)
+--><meta charset=utf-8>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<link rel=profile href=http://gmpg.org/xfn/11>
+<link rel=pingback href=https://www.joelonsoftware.com/xmlrpc.php>
+<title>The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!) – Joel on Software</title>
+<meta name=robots content=max-image-preview:large>
+<link rel=alternate type=application/rss+xml title="Joel on Software » Feed" href=https://www.joelonsoftware.com/feed/>
+<link rel=alternate type=application/rss+xml title="Joel on Software » Comments Feed" href=https://www.joelonsoftware.com/comments/feed/>
+
+
+<!--[if IE]>
+<link rel='stylesheet' id='ie7-style-css' href='https://149366100.v2.pressablecdn.com/wp-content/themes/editor-redux/inc/styles/ie.css?ver=1662635413' type='text/css' media='all' />
+<![endif]-->
+
+<link rel=https://api.w.org/ href=https://www.joelonsoftware.com/wp-json/><link rel=alternate type=application/json href=https://www.joelonsoftware.com/wp-json/wp/v2/posts/911><link rel=EditURI type=application/rsd+xml title=RSD href=https://www.joelonsoftware.com/xmlrpc.php?rsd>
+<link rel=canonical href=https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/>
+<link rel=shortlink href=https://wp.me/p83KNI-eH>
+<link rel=alternate type=application/json+oembed href="https://www.joelonsoftware.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.joelonsoftware.com%2F2003%2F10%2F08%2Fthe-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses%2F">
+<link rel=alternate type=text/xml+oembed href="https://www.joelonsoftware.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.joelonsoftware.com%2F2003%2F10%2F08%2Fthe-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses%2F&amp;format=xml">
+<meta name=description content="Ever wonder about that mysterious Content-Type tag? You know, the one you're supposed to put in HTML and you never quite know what it should be? Did you ever get an email from your friends in Bulgaria with the subject line &quot;???? ?????? ??? ????&quot;? I've been dismayed to discover just how many software developers…">
+<meta property=og:type content=article>
+<meta property=og:title content="The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)">
+<meta property=og:url content=https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/>
+<meta property=og:description content="Ever wonder about that mysterious Content-Type tag? You know, the one you’re supposed to put in HTML and you never quite know what it should be? Did you ever get an email from your friends in…">
+<meta property=article:published_time content=2003-10-08T00:15:12+00:00>
+<meta property=article:modified_time content=2017-11-17T21:42:17+00:00>
+<meta property=og:site_name content="Joel on Software">
+<meta property=og:image content=https://149366100.v2.pressablecdn.com/wp-content/uploads/2003/10/oem.png>
+<meta property=og:image:width content=271>
+<meta property=og:image:height content=209>
+<meta property=og:image:alt content>
+<meta property=og:locale content=en_US>
+<meta name=twitter:text:title content="The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)">
+<meta name=twitter:image content="https://149366100.v2.pressablecdn.com/wp-content/uploads/2003/10/ascii.png?w=144">
+<meta name=twitter:image:alt content="ASCII table">
+<meta name=twitter:card content=summary>
+<link rel=icon href=data:image/webp;base64,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 sizes=192x192>
+<meta name=msapplication-TileImage content="https://i0.wp.com/www.joelonsoftware.com/wp-content/uploads/2016/12/11969842.jpg?fit=270%2C270&amp;ssl=1">
+<meta http-equiv=content-security-policy content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:; object-src 'self' data:; frame-src 'self' data:;"><style>
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/* Avoid adding ID selector rules in this style sheet, since they could
+ * inadvertently match elements in the article content. */
+
+:root {
+  --grey-90-a10: rgba(12, 12, 13, 0.1);
+  --grey-90-a20: rgba(12, 12, 13, 0.2);
+  --grey-90-a30: rgba(12, 12, 13, 0.3);
+  --grey-90-a80: rgba(12, 12, 13, 0.8);
+  --grey-30: #d7d7db;
+  --blue-40: #45a1ff;
+  --blue-40-a30: rgba(69, 161, 255, 0.3);
+  --blue-60: #0060df;
+  --body-padding: 64px;
+  --font-size: 12;
+  --content-width: 70em;
+  --line-height: 1.6em;
+}
+
+body {
+  --main-background: #fff;
+  --main-foreground: #333;
+  --font-color: #000000;
+  --primary-color: #0B83FF;
+  --toolbar-border: var(--grey-90-a20);
+  --toolbar-transparent-border: transparent;
+  --toolbar-box-shadow: var(--grey-90-a10);
+  --toolbar-button-background: transparent;
+  --toolbar-button-background-hover: var(--grey-90-a10);
+  --toolbar-button-foreground-hover: var(--font-color);
+  --toolbar-button-background-active: var(--grey-90-a20);
+  --toolbar-button-foreground-active: var(--primary-color);
+  --toolbar-button-border: transparent;
+  --toolbar-button-border-hover: transparent;
+  --toolbar-button-border-active: transparent;
+  --tooltip-background: var(--grey-90-a80);
+  --tooltip-foreground: white;
+  --tooltip-border: transparent;
+  --popup-background: white;
+  --popup-border: rgba(0, 0, 0, 0.12);
+  --opaque-popup-border: #e0e0e0;
+  --popup-line: var(--grey-30);
+  --popup-shadow: rgba(49, 49, 49, 0.3);
+  --popup-button-background: #edecf0;
+  --popup-button-background-hover: hsla(0,0%,70%,.4);
+  --popup-button-foreground-hover: var(--font-color);
+  --popup-button-background-active: hsla(240,5%,5%,.15);
+  --selected-background: var(--blue-40-a30);
+  --selected-border: var(--blue-40);
+  --font-value-border: var(--grey-30);
+  --icon-fill: #3b3b3c;
+  --icon-disabled-fill: #8080807F;
+  --link-foreground: var(--blue-60);
+  --link-selected-foreground: #333;
+  --visited-link-foreground: #b5007f;
+  /* light colours */
+}
+
+body.sepia {
+  --main-background: #f4ecd8;
+  --main-foreground: #5b4636;
+  --toolbar-border: #5b4636;
+}
+
+body.dark {
+  --main-background: rgb(28, 27, 34);
+  --main-foreground: #eee;
+  --font-color: #fff;
+  --toolbar-border: #4a4a4b;
+  --toolbar-box-shadow: black;
+  --toolbar-button-background-hover: var(--grey-90-a30);
+  --toolbar-button-background-active: var(--grey-90-a80);
+  --tooltip-background: black;
+  --tooltip-foreground: white;
+  --popup-background: rgb(66,65,77);
+  --opaque-popup-border: #434146;
+  --popup-line: rgb(82, 82, 94);
+  --popup-button-background: #5c5c61;
+  --popup-button-background-active: hsla(0,0%,70%,.6);
+  --selected-background: #3E6D9A;
+  --font-value-border: #656468;
+  --icon-fill: #fff;
+  --icon-disabled-fill: #ffffff66;
+  --link-foreground: #45a1ff;
+  --link-selected-foreground: #fff;
+  --visited-link-foreground: #e675fd;
+  /* dark colours */
+}
+
+body.hcm {
+  --main-background: Canvas;
+  --main-foreground: CanvasText;
+  --font-color: CanvasText;
+  --primary-color: SelectedItem;
+  --toolbar-border: CanvasText;
+   /* We need a true transparent but in HCM this would compute to an actual color,
+      so select the page's background color instead: */
+  --toolbar-transparent-border: Canvas;
+  --toolbar-box-shadow: Canvas;
+  --toolbar-button-background: ButtonFace;
+  --toolbar-button-background-hover: ButtonText;
+  --toolbar-button-foreground-hover: ButtonFace;
+  --toolbar-button-background-active: SelectedItem;
+  --toolbar-button-foreground-active: SelectedItemText;
+  --toolbar-button-border: ButtonText;
+  --toolbar-button-border-hover: ButtonText;
+  --toolbar-button-border-active: ButtonText;
+  --tooltip-background: Canvas;
+  --tooltip-foreground: CanvasText;
+  --tooltip-border: CanvasText;
+  --popup-background: Canvas;
+  --popup-border: CanvasText;
+  --opaque-popup-border: CanvasText;
+  --popup-line: CanvasText;
+  --popup-button-background: ButtonFace;
+  --popup-button-background-hover: ButtonText;
+  --popup-button-foreground-hover: ButtonFace;
+  --popup-button-background-active: ButtonText;
+  --selected-background: Canvas;
+  --selected-border: SelectedItem;
+  --font-value-border: CanvasText;
+  --icon-fill: ButtonText;
+  --icon-disabled-fill: GrayText;
+  --link-foreground: LinkText;
+  --link-selected-foreground: ActiveText;
+  --visited-link-foreground: VisitedText;
+}
+
+body {
+  margin: 0;
+  padding: var(--body-padding);
+  background-color: var(--main-background);
+  color: var(--main-foreground);
+}
+
+body.loaded {
+  transition: color 0.4s, background-color 0.4s;
+}
+
+body.dark *::-moz-selection {
+  background-color: var(--selected-background);
+}
+
+a::-moz-selection {
+  color: var(--link-selected-foreground);
+}
+
+body.sans-serif,
+body.sans-serif .remove-button {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+body.serif,
+body.serif .remove-button {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+/* Override some controls and content styles based on color scheme */
+
+body.light > .container > .header > .domain {
+  border-bottom-color: #333333 !important;
+}
+
+body.sepia > .container > .header > .domain {
+  border-bottom-color: #5b4636 !important;
+}
+
+body.dark > .container > .header > .domain {
+  border-bottom-color: #eeeeee !important;
+}
+
+body.light blockquote {
+  border-inline-start: 2px solid #333333 !important;
+}
+
+body.sepia blockquote {
+  border-inline-start: 2px solid #5b4636 !important;
+}
+
+body.dark blockquote {
+  border-inline-start: 2px solid #eeeeee !important;
+}
+
+.light-button {
+  color: #333333;
+  background-color: #ffffff;
+}
+
+.dark-button {
+  color: #eeeeee;
+  background-color: #1c1b22;
+}
+
+.sepia-button {
+  color: #5b4636;
+  background-color: #f4ecd8;
+}
+
+.auto-button {
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .auto-button {
+    background-color: #1c1b22;
+    color: #eeeeee;
+  }
+}
+
+@media not (prefers-color-scheme: dark) {
+  .auto-button {
+    background-color: #ffffff;
+    color: #333333;
+  }
+}
+
+/* Loading/error message */
+
+.reader-message {
+  margin-top: 40px;
+  display: none;
+  text-align: center;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+/* Detector element to see if we're at the top of the doc or not. */
+.top-anchor {
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 5px;
+  pointer-events: none;
+}
+
+/* Header */
+
+.header {
+  text-align: start;
+  display: none;
+}
+
+.domain {
+  font-size: 0.9em;
+  line-height: 1.48em;
+  padding-bottom: 4px;
+  font-family: Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  border-bottom: 1px solid;
+  color: var(--link-foreground);
+}
+
+.header > h1 {
+  font-size: 1.6em;
+  line-height: 1.25em;
+  width: 100%;
+  margin: 30px 0;
+  padding: 0;
+}
+
+.header > .credits {
+  font-size: 0.9em;
+  line-height: 1.48em;
+  margin: 0 0 10px;
+  padding: 0;
+  font-style: italic;
+}
+
+.header > .meta-data {
+  font-size: 0.65em;
+  margin: 0 0 15px;
+}
+
+.reader-estimated-time {
+  text-align: match-parent;
+}
+
+/* Controls toolbar */
+
+.toolbar-container {
+  position: sticky;
+  z-index: 2;
+  top: 32px;
+  height: 0; /* take up no space, so body is at the top. */
+
+  /* As a stick container, we're positioned relative to the body. Move us to
+   * the edge of the viewport using margins, and take the width of
+   * the body padding into account for calculating our width.
+   */
+  margin-inline-start: calc(-1 * var(--body-padding));
+  width: max(var(--body-padding), calc((100% - var(--content-width)) / 2 + var(--body-padding)));
+  font-size: var(--font-size); /* Needed to ensure 'em' units match, is reset for .reader-controls */
+}
+
+.toolbar {
+  padding-block: 16px;
+  border: 1px solid var(--toolbar-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px var(--toolbar-box-shadow);
+
+  width: 32px; /* basic width, without padding/border */
+
+  /* padding should be 16px, except if there's not enough space for that, in
+   * which case use half the available space for padding (=25% on each side).
+   * The 34px here is the width + borders. We use a variable because we need
+   * to know this size for the margin calculation.
+   */
+  --inline-padding: min(16px, calc(25% - 0.25 * 34px));
+  padding-inline: var(--inline-padding);
+
+  /* Keep a maximum of 96px distance to the body, but center once the margin
+   * gets too small. We need to set the start margin, however...
+   * To center, we'd want 50% of the container, but we'd subtract half our
+   * own width (16px) and half the border (1px) and the inline padding.
+   * When the other margin would be 96px, we want 100% - 96px - the complete
+   * width of the actual toolbar (34px + 2 * padding)
+   */
+  margin-inline-start: max(calc(50% - 17px - var(--inline-padding)), calc(100% - 96px - 34px - 2 * var(--inline-padding)));
+
+  font-family: Helvetica, Arial, sans-serif;
+  list-style: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toolbar {
+    transition-property: border-color, box-shadow;
+    transition-duration: 250ms;
+  }
+
+  .toolbar .toolbar-button {
+    transition-property: opacity;
+    transition-duration: 250ms;
+  }
+
+  .toolbar-container.scrolled .toolbar:not(:hover, :focus-within) {
+    border-color: var(--toolbar-transparent-border);
+    box-shadow: 0 2px 8px transparent;
+  }
+
+  .toolbar-container.scrolled .toolbar:not(:hover, :focus-within) .toolbar-button {
+    opacity: 0.6;
+  }
+
+  .toolbar-container.transition-location {
+    transition-duration: 250ms;
+    transition-property: width;
+  }
+}
+
+.toolbar-container.overlaps .toolbar-button {
+  opacity: 0.1;
+}
+
+.dropdown-open .toolbar {
+  border-color: var(--toolbar-transparent-border);
+  box-shadow: 0 2px 8px transparent;
+}
+
+.reader-controls {
+  /* We use 'em's above this node to get it to the right size. However,
+   * the UI inside the toolbar should use a fixed, smaller size. */
+  font-size: 11px;
+}
+
+button {
+  -moz-context-properties: fill;
+  color: var(--font-color);
+  fill: var(--icon-fill);
+}
+
+button:disabled {
+  fill: var(--icon-disabled-fill);
+}
+
+.toolbar button::-moz-focus-inner {
+  border: 0;
+}
+
+.toolbar-button {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--toolbar-button-border);
+  border-radius: 4px;
+  margin: 4px 0;
+  background-color: var(--toolbar-button-background);
+  background-size: 16px 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.toolbar-button:hover,
+.toolbar-button:focus-visible {
+  background-color: var(--toolbar-button-background-hover);
+  border-color: var(--toolbar-button-border-hover);
+  fill: var(--toolbar-button-foreground-hover);
+}
+
+.open .toolbar-button,
+.toolbar-button:hover:active {
+  background-color: var(--toolbar-button-background-active);
+  border-color: var(--toolbar-button-border-active);
+  color: var(--toolbar-button-foreground-active);
+  fill: var(--toolbar-button-foreground-active);
+}
+
+.hover-label {
+  position: absolute;
+  top: 4px;
+  inset-inline-start: 36px;
+  line-height: 16px;
+  white-space: pre; /* make sure we don't wrap */
+  background-color: var(--tooltip-background);
+  color: var(--tooltip-foreground);
+  padding: 4px 8px;
+  border: 1px solid var(--tooltip-border);
+  border-radius: 2px;
+  visibility: hidden;
+  pointer-events: none;
+  /* Put above .dropdown .dropdown-popup, which has z-index: 1000. */
+  z-index: 1001;
+}
+
+/* Show the hover tooltip on non-dropdown buttons. */
+.toolbar-button:not(.dropdown-toggle):hover > .hover-label,
+.toolbar-button:not(.dropdown-toggle):focus-visible > .hover-label,
+/* Show the hover tooltip for dropdown buttons unless its dropdown is open. */
+:not(.open) > li > .dropdown-toggle:hover > .hover-label,
+:not(.open) > li > .dropdown-toggle:focus-visible > .hover-label {
+  visibility: visible;
+}
+
+.dropdown {
+  text-align: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.dropdown li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Popup */
+
+.dropdown .dropdown-popup {
+  text-align: start;
+  position: absolute;
+  inset-inline-start: 40px;
+  z-index: 1000;
+  background-color: var(--popup-background);
+  visibility: hidden;
+  border-radius: 4px;
+  border: 1px solid var(--popup-border);
+  box-shadow: 0 0 10px 0 var(--popup-shadow);
+  top: 0;
+}
+
+.open > .dropdown-popup {
+  visibility: visible;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  height: 24px;
+  width: 16px;
+  inset-inline-start: -16px;
+  background-image: url("chrome://global/skin/reader/RM-Type-Controls-Arrow.svg");
+  display: block;
+  -moz-context-properties: fill, stroke;
+  fill: var(--popup-background);
+  stroke: var(--opaque-popup-border);
+  pointer-events: none;
+}
+
+.dropdown-arrow:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+/* Align the style dropdown arrow (narrate does its own) */
+.style-dropdown .dropdown-arrow {
+  top: 7px;
+}
+
+/* Font style popup */
+
+.radio-button {
+  /* We visually hide these, but we keep them around so they can be focused
+   * and changed by interacting with them via the label, or the keyboard, or
+   * assistive technology.
+   */
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.radiorow,
+.buttonrow {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.content-width-value,
+.font-size-value,
+.line-height-value {
+  box-sizing: border-box;
+  width: 36px;
+  height: 20px;
+  line-height: 20px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+  border-radius: 10px;
+  border: 1px solid var(--font-value-border);
+  background-color: var(--popup-button-background);
+}
+
+.buttonrow > button {
+  border: 0;
+  height: 60px;
+  width: 90px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.buttonrow > button:enabled:hover,
+.buttonrow > button:enabled:focus-visible {
+  background-color: var(--popup-button-background-hover);
+  color: var(--popup-button-foreground-hover);
+  fill: var(--popup-button-foreground-hover);
+}
+
+.buttonrow > button:enabled:hover:active {
+  background-color: var(--popup-button-background-active);
+}
+
+.radiorow:not(:last-child),
+.buttonrow:not(:last-child) {
+  border-bottom: 1px solid var(--popup-line);
+}
+
+body.hcm .buttonrow.line-height-buttons {
+  /* On HCM the .color-scheme-buttons row is hidden, so remove the border from the row above it */
+  border-bottom: none;
+}
+
+.radiorow > label {
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 2px;
+  border: 2px solid var(--popup-border);
+}
+
+.radiorow > label[checked] {
+  border-color: var(--selected-border);
+}
+
+/* For the hover style, we draw a line under the item by means of a
+ * pseudo-element. Because these items are variable height, and
+ * because their contents are variable height, position it absolutely,
+ * and give it a width of 100% (the content width) + 4px for the 2 * 2px
+ * border width.
+ */
+.radiorow > input[type=radio]:focus-visible + label::after,
+.radiorow > label:hover::after {
+  content: "";
+  display: block;
+  border-bottom: 2px solid var(--selected-border);
+  width: calc(100% + 4px);
+  position: absolute;
+  /* to skip the 2 * 2px border + 2px spacing. */
+  bottom: -6px;
+  /* Match the start of the 2px border of the element: */
+  inset-inline-start: -2px;
+}
+
+.font-type-buttons > label {
+  height: 64px;
+  width: 105px;
+  /* Slightly more space between these items. */
+  margin: 10px;
+  /* Center the Sans-serif / Serif labels */
+  text-align: center;
+  background-size: 63px 39px;
+  background-repeat: no-repeat;
+  background-position: center 18px;
+  background-color: var(--popup-button-background);
+  fill: currentColor;
+  -moz-context-properties: fill;
+  /* This mostly matches baselines, but because of differences in font
+   * baselines between serif and sans-serif, this isn't always enough. */
+  line-height: 1;
+  padding-top: 2px;
+}
+
+.font-type-buttons > label[checked] {
+  background-color: var(--selected-background);
+}
+
+.sans-serif-button {
+  font-family: Helvetica, Arial, sans-serif;
+  background-image: url("chrome://global/skin/reader/RM-Sans-Serif.svg");
+}
+
+/* Tweak padding to match the baseline on mac */
+:root[platform=macosx] .sans-serif-button {
+  padding-top: 3px;
+}
+
+.serif-button {
+  font-family: Georgia, "Times New Roman", serif;
+  background-image: url("chrome://global/skin/reader/RM-Serif.svg");
+}
+
+body.hcm .color-scheme-buttons {
+  /* Disallow selecting themes when HCM is on. */
+  display: none;
+}
+
+.color-scheme-buttons > label {
+  padding: 12px;
+  height: 34px;
+  font-size: 12px;
+  /* Center the labels horizontally as well as vertically */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* We want 10px between items, but there's no margin collapsing in flexbox. */
+  margin: 10px 5px;
+}
+
+.color-scheme-buttons > input:first-child + label {
+  margin-inline-start: 10px;
+}
+
+.color-scheme-buttons > label:last-child {
+  margin-inline-end: 10px;
+}
+
+/* Toolbar icons */
+
+.close-button {
+  background-image: url("chrome://global/skin/icons/close.svg");
+}
+
+.style-button {
+  background-image: url("chrome://global/skin/reader/RM-Type-Controls-24x24.svg");
+}
+
+.minus-button {
+  background-size: 18px 18px;
+  background-image: url("chrome://global/skin/reader/RM-Minus-24x24.svg");
+}
+
+.plus-button {
+  background-size: 18px 18px;
+  background-image: url("chrome://global/skin/reader/RM-Plus-24x24.svg");
+}
+
+.content-width-minus-button {
+  background-size: 42px 16px;
+  background-image: url("chrome://global/skin/reader/RM-Content-Width-Minus-42x16.svg");
+}
+
+.content-width-plus-button {
+  background-size: 44px 16px;
+  background-image: url("chrome://global/skin/reader/RM-Content-Width-Plus-44x16.svg");
+}
+
+.line-height-minus-button {
+  background-size: 34px 14px;
+  background-image: url("chrome://global/skin/reader/RM-Line-Height-Minus-38x14.svg");
+}
+
+.line-height-plus-button {
+  background-size: 34px 24px;
+  background-image: url("chrome://global/skin/reader/RM-Line-Height-Plus-38x24.svg");
+}
+
+/* Mirror the line height buttons if the article is RTL. */
+.reader-controls[articledir="rtl"] .line-height-minus-button,
+.reader-controls[articledir="rtl"] .line-height-plus-button {
+  transform: scaleX(-1);
+}
+
+@media print {
+  .toolbar {
+    display: none !important;
+  }
+}
+
+/* Article content */
+
+/* Note that any class names from the original article that we want to match on
+ * must be added to CLASSES_TO_PRESERVE in ReaderMode.jsm, so that
+ * Readability.js doesn't strip them out */
+
+.container {
+  margin: 0 auto;
+  font-size: var(--font-size);
+  max-width: var(--content-width);
+  line-height: var(--line-height);
+}
+
+pre {
+  font-family: inherit;
+}
+
+.moz-reader-content {
+  display: none;
+  font-size: 1em;
+}
+
+@media print {
+  .moz-reader-content p,
+  .moz-reader-content code,
+  .moz-reader-content pre,
+  .moz-reader-content blockquote,
+  .moz-reader-content ul,
+  .moz-reader-content ol,
+  .moz-reader-content li,
+  .moz-reader-content figure,
+  .moz-reader-content .wp-caption {
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+  }
+}
+
+.moz-reader-content h1,
+.moz-reader-content h2,
+.moz-reader-content h3 {
+  font-weight: bold;
+}
+
+.moz-reader-content h1 {
+  font-size: 1.6em;
+  line-height: 1.25em;
+}
+
+.moz-reader-content h2 {
+  font-size: 1.2em;
+  line-height: 1.51em;
+}
+
+.moz-reader-content h3 {
+  font-size: 1em;
+  line-height: 1.66em;
+}
+
+.moz-reader-content a:link {
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+.moz-reader-content a:link,
+.moz-reader-content a:link:hover,
+.moz-reader-content a:link:active {
+  color: var(--link-foreground);
+}
+
+.moz-reader-content a:visited {
+  color: var(--visited-link-foreground);
+}
+
+.moz-reader-content * {
+  max-width: 100%;
+  height: auto;
+}
+
+.moz-reader-content p,
+.moz-reader-content p,
+.moz-reader-content code,
+.moz-reader-content pre,
+.moz-reader-content blockquote,
+.moz-reader-content ul,
+.moz-reader-content ol,
+.moz-reader-content li,
+.moz-reader-content figure,
+.moz-reader-content .wp-caption {
+  margin: -10px -10px 20px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.moz-reader-content li {
+  margin-bottom: 0;
+}
+
+.moz-reader-content li > ul,
+.moz-reader-content li > ol {
+  margin-bottom: -10px;
+}
+
+.moz-reader-content p > img:only-child,
+.moz-reader-content p > a:only-child > img:only-child,
+.moz-reader-content .wp-caption img,
+.moz-reader-content figure img {
+  display: block;
+}
+
+.moz-reader-content img[moz-reader-center] {
+  margin-inline: auto;
+}
+
+.moz-reader-content .caption,
+.moz-reader-content .wp-caption-text
+.moz-reader-content figcaption {
+  font-size: 0.9em;
+  line-height: 1.48em;
+  font-style: italic;
+}
+
+.moz-reader-content pre {
+  white-space: pre-wrap;
+}
+
+.moz-reader-content blockquote {
+  padding: 0;
+  padding-inline-start: 16px;
+}
+
+.moz-reader-content ul,
+.moz-reader-content ol {
+  padding: 0;
+}
+
+.moz-reader-content ul {
+  padding-inline-start: 30px;
+  list-style: disc;
+}
+
+.moz-reader-content ol {
+  padding-inline-start: 30px;
+}
+
+table,
+th,
+td {
+  border: 1px solid currentColor;
+  border-collapse: collapse;
+  padding: 6px;
+  vertical-align: top;
+}
+
+table {
+  margin: 5px;
+}
+
+/* Visually hide (but don't display: none) screen reader elements */
+.moz-reader-content .visually-hidden,
+.moz-reader-content .visuallyhidden,
+.moz-reader-content .sr-only {
+  display: inline-block;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  border-width: 0;
+}
+
+/* Hide elements with common "hidden" class names */
+.moz-reader-content .hidden,
+.moz-reader-content .invisible {
+  display: none;
+}
+
+/* Enforce wordpress and similar emoji/smileys aren't sized to be full-width,
+ * see bug 1399616 for context. */
+.moz-reader-content img.wp-smiley,
+.moz-reader-content img.emoji {
+  display: inline-block;
+  border-width: 0;
+  /* height: auto is implied from '.moz-reader-content *' rule. */
+  width: 1em;
+  margin: 0 .07em;
+  padding: 0;
+}
+
+.reader-show-element {
+  display: initial;
+}
+
+/* Provide extra spacing for images that may be aided with accompanying element such as <figcaption> */
+.moz-reader-block-img:not(:last-child) {
+  margin-block-end: 12px;
+}
+
+.moz-reader-wide-table {
+  overflow-x: auto;
+  display: block;
+}
+
+pre code {
+  background-color: var(--main-background);
+  border: 1px solid var(--font-color);
+  display: block;
+  overflow: auto;
+}</style></head>
+<body class="moz-reader-content content-width6 reader-show-element sans-serif container line-height4" style="display: block; padding: 24px;"><h1 class=reader-title>The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</h1><div id=readability-page-1 class=page>
+ <p>Ever wonder about that mysterious Content-Type tag? You know, the one you’re supposed to put in HTML and you never quite know what it should be?</p>
+<p>Did you ever get an email from your friends in Bulgaria with the subject line “???? ?????? ??? ????”?</p>
+<p><img decoding=async src=data:image/webp;base64,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 alt width=150 height=143><p>I’ve been dismayed to discover just how many software developers aren’t really completely up to speed on the mysterious world of character sets, encodings, Unicode, all that stuff. A couple of years ago, a beta tester for <a href=http://www.fogcreek.com/FogBUGZ>FogBUGZ</a> was wondering whether it could handle incoming email in Japanese. Japanese? They have email in Japanese? I had no idea. When I looked closely at the commercial ActiveX control we were using to parse MIME email messages, we discovered it was doing exactly the wrong thing with character sets, so we actually had to write heroic code to undo the wrong conversion it had done and redo it correctly. When I looked into another commercial library, it, too, had a completely broken character code implementation. I corresponded with the developer of that package and he sort of thought they “couldn’t do anything about it.” Like many programmers, he just wished it would all blow over somehow.</p>
+<p>But it won’t. When I discovered that the popular web development tool PHP has almost <a href=http://ca3.php.net/manual/en/language.types.string.php>complete ignorance of character encoding issues</a>, blithely using 8 bits for characters, making it darn near impossible to develop good international web applications, I thought, <em>enough is enough</em>.</p>
+<p>So I have an announcement to make: if you are a programmer working in 2003 and you don’t know the basics of characters, character sets, encodings, and Unicode, and I <em>catch</em> you, I’m going to punish you by making you peel onions for 6 months in a submarine. I swear I will.</p>
+<p>And one more thing:</p>
+<p><strong>IT’S NOT THAT HARD.</strong></p>
+<p>In this article I’ll fill you in on exactly what <em>every working programmer</em> should know. All that stuff about “plain text = ascii = characters are 8 bits” is not only wrong, it’s hopelessly wrong, and if you’re still programming that way, you’re not much better than a medical doctor who doesn’t believe in germs. Please do not write another line of code until you finish reading this article.</p>
+<p>Before I get started, I should warn you that if you are one of those rare people who knows about internationalization, you are going to find my entire discussion a little bit oversimplified. I’m really just trying to set a minimum bar here so that everyone can understand what’s going on and can write code that has a <em>hope</em> of working with text in any language other than the subset of English that doesn’t include words with accents. And I should warn you that character handling is only a tiny portion of what it takes to create software that works internationally, but I can only write about one thing at a time so today it’s character sets.</p>
+<p><strong><span>A Historical Perspective</span></strong></p>
+<p>The easiest way to understand this stuff is to go chronologically.</p>
+<p>You probably think I’m going to talk about very old character sets like EBCDIC here. Well, I won’t. EBCDIC is not relevant to your life. We don’t have to go that far back in time.</p>
+<p><img decoding=async src="data:image/webp;base64,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" alt="ASCII table" width=274 height=146><p><span style="background-color: var(--main-background); color: var(--main-foreground); font-size: 1em;">Back in the semi-olden days, when Unix was being invented and K&amp;R were writing </span><a href=http://cm.bell-labs.com/cm/cs/cbook/ style="background-color: var(--main-background); font-size: 1em;">The C Programming Language</a><span style="background-color: var(--main-background); color: var(--main-foreground); font-size: 1em;">, everything was very simple. EBCDIC was on its way out. The only characters that mattered were good old unaccented English letters, and we had a code for them called </span><a href=http://www.robelle.com/library/smugbook/ascii.html style="background-color: var(--main-background); font-size: 1em;">ASCII</a><span style="background-color: var(--main-background); color: var(--main-foreground); font-size: 1em;"> which was able to represent every character using a number between 32 and 127. Space was 32, the letter “A” was 65, etc. This could conveniently be stored in 7 bits. Most computers in those days were using 8-bit bytes, so not only could you store every possible ASCII character, but you had a whole bit to spare, which, if you were wicked, you could use for your own devious purposes: the dim bulbs at WordStar actually turned on the high bit to indicate the last letter in a word, condemning WordStar to English text only. Codes below 32 were called </span><em style="background-color: var(--main-background); color: var(--main-foreground); font-size: 1em;">unprintable</em><span style="background-color: var(--main-background); color: var(--main-foreground); font-size: 1em;"> and were used for cussing. Just kidding. They were used for control characters, like 7 which made your computer beep and 12 which caused the current page of paper to go flying out of the printer and a new one to be fed in.</span><br></p>
+<p>And all was good, assuming you were an English speaker.</p>
+<p><img decoding=async fetchpriority=high src="data:image/webp;base64,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" alt width=271 height=209><p>Because bytes have room for up to eight bits, lots of people got to thinking, “gosh, we can use the codes 128-255 for our own purposes.” The trouble was, <em>lots</em> of people had this idea at the same time, and they had their own ideas of what should go where in the space from 128 to 255. The IBM-PC had something that came to be known as the OEM character set which provided some accented characters for European languages and <a href=http://www.jimprice.com/ascii-dos.gif>a bunch of line drawing characters</a>… horizontal bars, vertical bars, horizontal bars with little dingle-dangles dangling off the right side, etc., and you could use these line drawing characters to make spiffy boxes and lines on the screen, which you can still see running on the 8088 computer at your dry cleaners’. In fact&nbsp; as soon as people started buying PCs outside of America all kinds of different OEM character sets were dreamed up, which all used the top 128 characters for their own purposes. For example on some PCs the character code 130 would display as é, but on computers sold in Israel it was the Hebrew letter Gimel (<img decoding=async loading=lazy src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="9"><rect fill-opacity="0"/></svg>' alt=ג width=5 height=9>), so when Americans would send their résumés to Israel they would arrive as r<img decoding=async loading=lazy src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="9"><rect fill-opacity="0"/></svg>' alt=ג width=5 height=9>sum<img decoding=async loading=lazy src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="9"><rect fill-opacity="0"/></svg>' alt=ג width=5 height=9>s. In many cases, such as Russian, there were lots of different ideas of what to do with the upper-128 characters, so you couldn’t even reliably interchange Russian documents.</p>
+<p>Eventually this OEM free-for-all got codified in the ANSI standard. In the ANSI standard, everybody agreed on what to do below 128, which was pretty much the same as ASCII, but there were lots of different ways to handle the characters from 128 and on up, depending on where you lived. These different systems were called <em><a href=http://www.i18nguy.com/unicode/codepages.html#msftdos>code pages</a></em>. So for example in Israel DOS used a code page called 862, while Greek users used 737. They were the same below 128 but different from 128 up, where all the funny letters resided. The national versions of MS-DOS had dozens of these code pages, handling everything from English to Icelandic and they even had a few “multilingual” code pages that could do Esperanto and Galician <em>on the same computer! Wow!</em> But getting, say, Hebrew and Greek on the same computer was a complete impossibility unless you wrote your own custom program that displayed everything using bitmapped graphics, because Hebrew and Greek required different code pages with different interpretations of the high numbers.</p>
+<p>Meanwhile, in Asia, even more crazy things were going on to take into account the fact that Asian alphabets have thousands of letters, which were never going to fit into 8 bits. This was usually solved by the messy system called DBCS, the “double byte character set” in which <em>some</em> letters were stored in one byte and others took two. It was easy to move forward in a string, but dang near impossible to move backwards. Programmers were encouraged not to use s++ and s– to move backwards and forwards, but instead to call functions such as Windows’ AnsiNext and AnsiPrev which knew how to deal with the whole mess.</p>
+<p>But still, most people just pretended that a byte was a character and a character was 8 bits and as long as you never moved a string from one computer to another, or spoke more than one language, it would sort of always work. But of course, as soon as the Internet happened, it became quite commonplace to move strings from one computer to another, and the whole mess came tumbling down. Luckily, Unicode had been invented.</p>
+<p><strong><span>Unicode</span></strong></p>
+<p>Unicode was a brave effort to create a single character set that included every reasonable writing system on the planet and some make-believe ones like Klingon, too. Some people are under the misconception that Unicode is simply a 16-bit code where each character takes 16 bits and therefore there are 65,536 possible characters. <strong>This is not, actually, correct.</strong> It is the single most common myth about Unicode, so if you thought that, don’t feel bad.</p>
+<p>In fact, Unicode has a different way of thinking about characters, and you have to understand the Unicode way of thinking of things or nothing will make sense.</p>
+<p>Until now, we’ve assumed that a letter maps to some bits which you can store on disk or in memory:</p>
+<p>A -&gt; 0100 0001</p>
+<p>In Unicode, a letter maps to something called a <em>code point</em> which is still just a theoretical concept. How that code point is represented in memory or on disk is a whole nuther story.</p>
+<p>In Unicode, the letter A is a platonic ideal. It’s just floating in heaven:</p>
+<p><span>A</span></p>
+<p>This platonic <span>A</span> is different than <span>B</span>, and different from <span>a</span>, but the same as <span>A</span> and <i><b><span>A</span></b></i> and A. The idea that A in a Times New Roman font is the same character as the A in a Helvetica font, but <em>different</em> from “a” in lower case, does not seem very controversial, but in some languages just figuring out what a letter <em>is</em> can cause controversy. Is the German letter ß a real letter or just a fancy way of writing ss? If a letter’s shape changes at the end of the word, is that a different letter? Hebrew says yes, Arabic says no. Anyway, the smart people at the Unicode consortium have been figuring this out for the last decade or so, accompanied by a great deal of highly political debate, and you don’t have to worry about it. They’ve figured it all out already.</p>
+<p>Every platonic letter in every alphabet is assigned a magic number by the Unicode consortium which is written like this: <strong>U+0639</strong>.&nbsp; This magic number is called a <em>code point</em>. The U+ means “Unicode” and the numbers are hexadecimal. <strong>U+0639</strong> is the Arabic letter Ain. The English letter A would be <strong>U+0041</strong>. You can find them all using the <strong>charmap</strong> utility on Windows 2000/XP or visiting <a href=http://www.unicode.org/>the Unicode web site</a>.</p>
+<p>There is no real limit on the number of letters that Unicode can define and in fact they have gone beyond 65,536 so not every unicode letter can really be squeezed into two bytes, but that was a myth anyway.</p>
+<p>OK, so say we have a string:</p>
+<p><strong>Hello</strong></p>
+<p>which, in Unicode, corresponds to these five code points:</p>
+<p>U+0048 U+0065 U+006C U+006C U+006F.</p>
+<p>Just a bunch of code points. Numbers, really. We haven’t yet said anything about how to store this in memory or represent it in an email message.</p>
+<p><strong><span>Encodings</span></strong></p>
+<p>That’s where <em>encodings</em> come in.</p>
+<p>The earliest idea for Unicode encoding, which led to the myth about the two bytes, was, hey, let’s just store those numbers in two bytes each. So Hello becomes</p>
+<p>00 48 00 65 00 6C 00 6C 00 6F</p>
+<p>Right? Not so fast! Couldn’t it also be:</p>
+<p>48 00 65 00 6C 00 6C 00 6F 00 ?</p>
+<p>Well, technically, yes, I do believe it could, and, in fact, early implementors wanted to be able to store their Unicode code points in high-endian or low-endian mode, whichever their particular CPU was fastest at, and lo, it was evening and it was morning and there were already <em>two</em> ways to store Unicode. So the people were forced to come up with the bizarre convention of storing a FE FF at the beginning of every Unicode string; this is called a <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/unicode_42jv.asp">Unicode Byte Order Mark</a> and if you are swapping your high and low bytes it will look like a FF FE and the person reading your string will know that they have to swap every other byte. Phew. Not every Unicode string in the wild has a byte order mark at the beginning.</p>
+<p><img decoding=async loading=lazy src="data:image/webp;base64,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" alt width=390 height=61></p>
+<p>For a while it seemed like that might be good enough, but programmers were complaining. “Look at all those zeros!” they said, since they were Americans and they were looking at English text which rarely used code points above U+00FF. Also they were liberal hippies in California who wanted to <em>conserve (sneer)</em>. If they were Texans they wouldn’t have minded guzzling twice the number of bytes. But those Californian wimps couldn’t bear the idea of <em>doubling</em> the amount of storage it took for strings, and anyway, there were already all these doggone documents out there using various ANSI and DBCS character sets and who’s going to convert them all? <em>Moi?</em> For this reason alone most people decided to ignore Unicode for several years and in the meantime things got worse.</p>
+<p>Thus was <a href=http://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt>invented</a>&nbsp;the brilliant concept of <a href=http://www.utf-8.com/>UTF-8</a>. UTF-8 was another system for storing your string of Unicode code points, those magic U+ numbers, in memory using 8 bit bytes. In UTF-8, every code point from 0-127 is stored <em>in a single byte</em>. Only code points 128 and above are stored using 2, 3, in fact, up to 6 bytes.</p>
+<p><img decoding=async loading=lazy src=data:image/webp;base64,UklGRpgFAABXRUJQVlA4TIwFAAAvj4EPAMfBKJLkNg1HYAVIP5HIyTYT02AUSbaTlvKOJCGYxMe7gYiccfJd1batKjPKcw/xPoVqRCEAQVyuNGH+A//y58cPGZmAgoDsE5jw1Fh9O2RkV8EMGYGOAWpmJAS8GAkQcDN+uPJQwMYOCxX2gRkJF3pSBwszEm5yWdwBTobA/hKdmQFF27bbthFAuoDMkGMz1ZVR1JUqZhL5/z9NuHjv4ZEEOW2tiP5DVCQ7bHMGgx0p7FOaWKu4+QCrsbllbdO0uWUtHqX0b8UuOx8JaL5WblUNCLU4GVMHKfcscmvMj1xv8OLrmo6UL6a27SFra8z6ttxUtjXH6kz2ydSSAKkEdWHCAjjSrrFum8MrZg5YJ8FkrQ1A3NKYmzPkHYJAyYDwIydRyfEg66JpsPxy/8k0UO0uS2hO/nVxq8q/XxZvP1jMu7+ef/s32cdzTnV3J0C9RlIRatcADUt6h0RdDbRBnbAtjhUB0t7ZFoIgV6caESyDSo4HVRdDg0WWL3VYbXJ32NUW3/Ig7x/fPoXx7xMB6hWSClBbYxqkYXd3/pmutzkE6yQuN4ew8LYOgmRXiLDLLIPKjwci0DRYvv+7CapNboIrzsefd2G65jky550VocInFtCwgdekfXtrwx2N9S0PQNrGLm5210t8M2LJMD0IUfnQdZHx5QeBahN8uvMX866xiyaItbHJgNTyqG5pPr/UQCO6zpffc+uWnheoSSYE8RBf/lwef94hyCVxCTtWiMqHrosMlu8TVDtXtu5Og62tB1ntTIlb/sh1Mshq/3Hc3NIcqzmWhTlkdD8SQcAEqBqQcEn/8WqfcdXNpHiVbuh+JIKACVBVIC1Mw6gpGOIsaj/vg36IIAWZ+rS17e7ofiSCgAlQVSCtdb+8hHDVdXd+2g79EEEKMkeDbIK47cWvzEI/RJCCzNID/xidAKf9fSaHfoggBJmnTfAhvgm6OfRDBCnIf662GXS6Naa2GqdJA70k2uVBitMdtNNTUgZybnRz27y8tRrdKAO99d9ZMV/Luu2rD9AuVNJ4D42FFIBMrPd0fqam4T2kgfrmDbQjyis/QLtQSeM9NBZSADKtOe+6Ri9IRe3kiffQWEgByLQeFN/yYpfpHIS2E5VQSeM9NBaSB5k1TfxDguCNRW98uwaVVMFDizhIHuS/yx5KPqfC6SvQzgL7RXgoIgR+OTAPZSqaqm6vSQNV6PYG71uEfjEeiggB+sA8NLYiAUiivYc0UAXveQDtRPmM8VBECNAH5qGxFQlA0px7b6CKEe4iMzAPja1IAJLmgzdgoHoHqgnQB+ahsRXxIJPYhEish6JgAu/gPDSuIgHI/z62pDYhhVwwxwBUASQuA6iuCzDWP5J1AY3i0vVEr0HI4+7DYyHDaZzqugBj/WNeF2DK17ifebQeCgIYd58qDxksAyivC5DFjXldgClf437mVCZ2p5KxrgsIko77mSWfhaXmQdNzsJYxrwvIy5dSj7bJFQh5XBMBJEZtXUDwlfGo1wUKaflS6v9EemhxCi9WKqfdMvxyuC8P5TRwzB6aGnVlZ21uVQFIXDcKcnu5y2x/Hsq5Zro8tL/x6M9caavBVxBAVLzHdqYG7ezNQznXTJeH9jceYK69B3+ZSTHWrf6I3ykmXR7a33iAufZ+gD+UpXqwvOk1nGumy0N7Gw8gHUCTzphjpdekOJm7AtKfh9KumS4P1R0Pvrj/1nmoXTQBg8Jp+n9F+/VQsl8gduny0BGNBzepUfudDvp/RQfgoYw+TpCHqo0HWUAoYf41V/sdG/J/RYfgoYw+TpCHqo0HWQAGZ4+K8RBaO+1MkIeqjQdZAPH516kelPtsOGH0cXo8VG88qAKo61sXMgCIAIG+DvqCMMPwUFIfp8dD48ZDjGAB alt="How UTF-8 works" width=398 height=63></p>
+<p>This has the neat side effect that English text looks <em>exactly the same in UTF-8 as it did in ASCII,</em> so Americans don’t even notice anything wrong. Only the rest of the world has to jump through hoops. Specifically, <strong>Hello</strong>, which was U+0048 U+0065 U+006C U+006C U+006F, will be stored as 48 65 6C 6C 6F, which, behold! is the same as it was stored in ASCII, and ANSI, and every OEM character set on the planet. Now, if you are so bold as to use accented letters or Greek letters or Klingon letters, you’ll have to use several bytes to store a single code point, but the Americans will never notice. (UTF-8 also has the nice property that ignorant old string-processing code that wants to use a single 0 byte as the null-terminator will not truncate strings).</p>
+<p>So far I’ve told you <em>three</em> ways of encoding Unicode. The traditional store-it-in-two-byte methods are called UCS-2 (because it has two bytes) or UTF-16 (because it has 16 bits), and you still have to figure out if it’s high-endian UCS-2 or low-endian UCS-2. And there’s the popular new UTF-8 <a href=http://www.zvon.org/tmRFC/RFC2279/Output/chapter2.html>standard</a> which has the nice property of also working respectably if you have the happy coincidence of English text and braindead programs that are completely unaware that there is anything other than ASCII.</p>
+<p>There are actually a bunch of other ways of encoding Unicode. There’s something called UTF-7, which is a lot like UTF-8 but guarantees that the high bit will always be zero, so that if you have to pass Unicode through some kind of draconian police-state email system that thinks 7 bits are <em>quite enough, thank you</em> it can still squeeze through unscathed. There’s UCS-4, which stores each code point in 4 bytes, which has the nice property that every single code point can be stored in the same number of bytes, but, golly, even the Texans wouldn’t be so bold as to waste <em>that</em> much memory.</p>
+<p>And in fact now that you’re thinking of things in terms of platonic ideal letters which are represented by Unicode code points, those unicode code points can be encoded in any old-school encoding scheme, too! For example, you could encode the Unicode string for Hello (U+0048 U+0065 U+006C U+006C U+006F) in ASCII, or the old OEM Greek Encoding, or the Hebrew ANSI Encoding, or any of several hundred encodings that have been invented so far, <em>with one catch:</em> some of the letters might not show up! If there’s no equivalent for the Unicode code point you’re trying to represent in the encoding you’re trying to represent it in, you usually get a little question mark: ? or, if you’re <em>really</em> good, a box. Which did you get? -&gt; �</p>
+<p>There are hundreds of traditional encodings which can only store <em>some</em> code points correctly and change all the other code points into question marks. Some popular encodings of English text are Windows-1252 (the Windows 9x standard for Western European languages) and&nbsp;<a href=http://www.htmlhelp.com/reference/charset/>ISO-8859-1</a>, aka Latin-1 (also useful for any Western European language). But try to store Russian or Hebrew letters in these encodings and you get a bunch of question marks. UTF 7, 8, 16, and 32 all have the nice property of being able to store <em>any</em> code point correctly.</p>
+<p><strong><span>The Single Most Important Fact About Encodings</span></strong></p>
+<p>If you completely forget everything I just explained, please remember one extremely important fact. <strong>It does not make sense to have a string without knowing what encoding it uses</strong>. You can no longer stick your head in the sand and pretend that “plain” text is ASCII.</p>
+<p><strong><u>There Ain’t No Such Thing As Plain Text.</u></strong></p>
+<p>If you have a string, in memory, in a file, or in an email message, you have to know what encoding it is in or you cannot interpret it or display it to users correctly.</p>
+<p>Almost every stupid “my website looks like gibberish” or “she can’t read my emails when I use accents” problem comes down to one naive programmer who didn’t understand the simple fact that if you don’t tell me whether a particular string is encoded using UTF-8 or ASCII or ISO 8859-1 (Latin 1) or Windows 1252 (Western European), you simply cannot display it correctly or even figure out where it ends. There are over a hundred encodings and above code point 127, all bets are off.</p>
+<p>How do we preserve this information about what encoding a string uses? Well, there are standard ways to do this. For an email message, you are expected to have a string in the header of the form</p>
+<blockquote dir=ltr><p><strong>Content-Type: text/plain;&nbsp;charset="UTF-8"</strong></p></blockquote>
+<p>For a web page, the original idea was that the web server would return a similar <strong>Content-Type</strong> http header along with the web page itself — not in the HTML itself, but as one of the response headers that are sent before the HTML page.</p>
+<p>This causes problems. Suppose you have a big web server with lots of sites and hundreds of pages contributed by lots of people in lots of different languages and all using whatever encoding their copy of Microsoft FrontPage saw fit to generate. The web server itself wouldn’t really <em>know</em> what encoding each file was written in, so it couldn’t send the Content-Type header.</p>
+<p>It would be convenient if you could put the Content-Type of the HTML file right in the HTML file itself, using some kind of special tag. Of course this drove purists crazy… how can you <em>read</em> the HTML file until you know what encoding it’s in?! Luckily, almost every encoding in common use does the same thing with characters between 32 and 127, so you can always get this far on the HTML page without starting to use funny letters:</p>
+<blockquote dir=ltr><p><strong>&lt;html&gt;<br>
+&lt;head&gt;<br>
+</strong><strong>&lt;<span>meta</span> <span>http-equiv</span>=<span>"Content-Type"</span> <span>content</span>=<span>"text/html; charset=utf-8"</span>&gt;</strong></p></blockquote>
+<p>But that meta tag really has to be the very first thing in the &lt;head&gt; section because as soon as the web browser sees this tag it’s going to stop parsing the page and start over after reinterpreting the whole page using the encoding you specified.</p>
+<p>What do web browsers do if they don’t find any Content-Type, either in the http headers or the meta tag? Internet Explorer actually does something quite interesting: it tries to guess, based on the frequency in which various bytes appear in typical text in typical encodings of various languages, what language and encoding was used. Because the various old 8 bit code pages tended to put their national letters in different ranges between 128 and 255, and because every human language has a different characteristic histogram of letter usage, this actually has a chance of working. It’s truly weird, but it does seem to work often enough that naïve web-page writers who never knew they needed a Content-Type header look at their page in a web browser and it <em>looks ok</em>, until one day, they write something that doesn’t exactly conform to the letter-frequency-distribution of their native language, and Internet Explorer decides it’s Korean and displays it thusly, proving, I think, the point that Postel’s Law about being “conservative in what you emit and liberal in what you accept” is quite frankly not a good engineering principle. Anyway, what does the poor reader of this website, which was written in Bulgarian but appears to be Korean (and not even cohesive Korean), do? He uses the View | Encoding menu and tries a bunch of different encodings (there are at least a dozen for Eastern European languages) until the picture comes in clearer. If he knew to do that, which most people don’t.</p>
+<p><img decoding=async loading=lazy src="data:image/webp;base64,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" alt width=300 height=225></p>
+<p>For the latest version of <a href=http://www.fogcreek.com/CityDesk>CityDesk</a>, the web site management software published by <a href=http://www.fogcreek.com/>my company</a>, we decided to do everything internally in UCS-2 (two byte) Unicode, which is what Visual Basic, COM, and Windows NT/2000/XP use as their native string type. In C++ code we just declare strings as <strong>wchar_t</strong> (“wide char”) instead of <strong>char</strong> and use the <strong>wcs</strong> functions instead of the <strong>str</strong> functions (for example <strong>wcscat</strong> and <strong>wcslen</strong> instead of <strong>strcat</strong> and <strong>strlen</strong>). To create a literal UCS-2 string in C code you just put an L before it as so: <strong>L"Hello"</strong>.</p>
+<p>When CityDesk publishes the web page, it converts it to UTF-8 encoding, which has been well supported by web browsers for many years. That’s the way all <a href=https://www.joelonsoftware.com/navLinks/OtherLanguages.html>29 language versions</a> of <em>Joel on Software</em> are encoded and I have not yet heard a single person who has had any trouble viewing them.</p>
+<p>This article is getting rather long, and I can’t possibly cover everything there is to know about character encodings and Unicode, but I hope that if you’ve read this far, you know enough to go back to programming, using antibiotics instead of leeches and spells, a task to which I will leave you now.<br></p>
+ </div><style>.single-file-highlight-yellow, .single-file-highlight-yellow-mode ::selection { background-color: #ffff7c !important; color: black !important; } .single-file-highlight-pink, .single-file-highlight-pink-mode ::selection { background-color: #ffbbb6 !important; color: black !important; } .single-file-highlight-blue, .single-file-highlight-blue-mode ::selection { background-color: #95d0ff !important; color: black !important; } .single-file-highlight-green, .single-file-highlight-green-mode ::selection { background-color: #93ef8d !important; color: black !important; } span.single-file-highlight-yellow, span.single-file-highlight-pink, span.single-file-highlight-blue, span.single-file-highlight-green { display: inline !important; } .single-file-highlight-hidden { background-color: inherit !important; color: inherit !important; } .single-file-mask { all: initial; display: contents !important; } .single-file-mask.single-file-page-mask { opacity: .99 !important; } single-file-note { all: initial !important; display: contents !important; } .single-file-cut-hover, .single-file-cut-outer-hover, .single-file-cut-selected, .single-file-cut-outer-selected { transition: outline-width 125ms !important; outline-offset: -4px !important; outline-width: 4px !important; } .single-file-cut-hover, .single-file-cut-outer-hover { outline-style: dotted !important; } .single-file-cut-selected, .single-file-cut-outer-selected { outline-style: dashed !important; } .single-file-cut-hover, .single-file-cut-selected { outline-color: red !important; } .single-file-cut-outer-hover, .single-file-cut-outer-selected { outline-color: green !important; } .single-file-cut-mode, .single-file-cut-mode * { pointer-events: auto !important; touch-action: none !important; } .single-file-cut-hover, .single-file-cut-outer-hover, .single-file-remove-highlights-mode .single-file-highlight:hover { cursor: crosshair !important; } .single-file-removed { display: none !important; float: none !important; position: static !important; visibility: collapse !important; } a[href], img { -webkit-touch-callout: none; }</style><script data-template-shadow-root>(() => { document.currentScript.remove(); const processNode = node => { node.querySelectorAll("template[shadowroot]").forEach(element=>{ let shadowRoot = getShadowRoot(element.parentElement); if (!shadowRoot) { try { shadowRoot = element.parentElement.attachShadow({mode:element.getAttribute("shadowroot")}); shadowRoot.innerHTML = element.innerHTML; element.remove(); } catch (error) {} if (shadowRoot) { processNode(shadowRoot); } } }) }; const FORBIDDEN_TAG_NAMES = ["a","area","audio","base","br","col","command","embed","hr","img","iframe","input","keygen","link","meta","param","source","track","video","wbr"]; const NOTE_TAGNAME = "single-file-note"; const NOTE_CLASS = "note"; const NOTE_ANCHORED_CLASS = "note-anchored"; const NOTE_SELECTED_CLASS = "note-selected"; const NOTE_MOVING_CLASS = "note-moving"; const NOTE_MASK_MOVING_CLASS = "note-mask-moving"; const MASK_CLASS = "single-file-mask"; const HIGHLIGHT_CLASS = "single-file-highlight"; const NOTES_WEB_STYLESHEET = ".note { all: initial; display: flex; flex-direction: column; height: 150px; width: 150px; position: absolute; top: 10px; left: 10px; border: 1px solid rgb(191, 191, 191); z-index: 2147483646; box-shadow: 3px 3px 3px rgba(33, 33, 33, .7); min-height: 100px; min-width: 100px; } .note-selected { z-index: 2147483647; } .note-hidden { display: none; } .note-collapsed { min-height: 30px; max-height: 30px; overflow: hidden; } .note blockquote { all: initial; padding: 1px; height: 100%; } .note textarea { all: initial; white-space: break-spaces; font-family: Arial, Helvetica, sans-serif; font-size: 14px; height: 100%; width: 100%; padding: 2px; border: 1px solid transparent; resize: none; color: black; } .note textarea:focus { border: 1px dotted rgb(160, 160, 160); } .note header { all: initial; min-height: 30px; cursor: grab; user-select: none; } .note .note-remove { all: initial; position: absolute; right: 0px; top: 2px; padding: 5px; opacity: .5; cursor: pointer; user-select: none; width: 16px; height: 16px; } .note .note-anchor { all: initial; position: absolute; left: 0px; top: 2px; padding: 5px; opacity: .25; cursor: pointer; width: 16px; height: 16px; } .note .note-resize { all: initial; position: absolute; bottom: -5px; right: -5px; height: 15px; width: 15px; cursor: nwse-resize; user-select: none; } .note .note-remove:hover { opacity: 1; } .note .note-anchor:hover { opacity: .5; } .note-anchored .note-anchor { opacity: .5; } .note-anchored .note-anchor:hover { opacity: 1; } .note-moving { opacity: .75; box-shadow: 6px 6px 3px rgba(33, 33, 33, .7); } .note-moving * { cursor: grabbing; } .note-yellow header { background-color: #f5f545; } .note-yellow blockquote { background-color: #ffff7c; } .note-pink header { background-color: #ffa59f; } .note-pink blockquote { background-color: #ffbbb6; } .note-blue header { background-color: #84c8ff; } .note-blue blockquote { background-color: #95d0ff; } .note-green header { background-color: #93ef8d; } .note-green blockquote { background-color: #9cff95; }"; const MASK_WEB_STYLESHEET = ".note-mask { all: initial; position: fixed; z-index: 2147483645; pointer-events: none; background-color: transparent; transition: background-color 125ms; } .note-mask-moving.note-yellow { background-color: rgba(255, 255, 124, .3); } .note-mask-moving.note-pink { background-color: rgba(255, 187, 182, .3); } .note-mask-moving.note-blue { background-color: rgba(149, 208, 255, .3); } .note-mask-moving.note-green { background-color: rgba(156, 255, 149, .3); } .page-mask { all: initial; position: fixed; top: 0; left: 0; width: 0; height: 0; z-index: 2147483646; } .page-mask-active { width: 100vw; height: 100vh; }"; const NOTE_HEADER_HEIGHT = 25; const PAGE_MASK_ACTIVE_CLASS = "page-mask-active"; const REMOVED_CONTENT_CLASS = "single-file-removed"; const reflowNotes = function reflowNotes() { document.querySelectorAll(NOTE_TAGNAME).forEach(containerElement => { const noteElement = containerElement.shadowRoot.querySelector("." + NOTE_CLASS); const noteBoundingRect = noteElement.getBoundingClientRect(); const anchorElement = getAnchorElement(containerElement); const anchorBoundingRect = anchorElement.getBoundingClientRect(); const maxX = anchorBoundingRect.x + Math.max(0, anchorBoundingRect.width - noteBoundingRect.width); const minX = anchorBoundingRect.x; const maxY = anchorBoundingRect.y + Math.max(0, anchorBoundingRect.height - NOTE_HEADER_HEIGHT); const minY = anchorBoundingRect.y; let left = parseInt(noteElement.style.getPropertyValue("left")); let top = parseInt(noteElement.style.getPropertyValue("top")); if (noteBoundingRect.x > maxX) { left -= noteBoundingRect.x - maxX; } if (noteBoundingRect.x < minX) { left += minX - noteBoundingRect.x; } if (noteBoundingRect.y > maxY) { top -= noteBoundingRect.y - maxY; } if (noteBoundingRect.y < minY) { top += minY - noteBoundingRect.y; } noteElement.style.setProperty("position", "absolute"); noteElement.style.setProperty("left", left + "px"); noteElement.style.setProperty("top", top + "px"); }); }; const addNoteRef = function addNoteRef(anchorElement, noteId) { const noteRefs = getNoteRefs(anchorElement); noteRefs.push(noteId); setNoteRefs(anchorElement, noteRefs); }; const deleteNoteRef = function deleteNoteRef(containerElement, noteId) { const anchorElement = getAnchorElement(containerElement); const noteRefs = getNoteRefs(anchorElement).filter(noteRefs => noteRefs != noteId); if (noteRefs.length) { setNoteRefs(anchorElement, noteRefs); } else { delete anchorElement.dataset.singleFileNoteRefs; } }; const getNoteRefs = function getNoteRefs(anchorElement) { return anchorElement.dataset.singleFileNoteRefs ? anchorElement.dataset.singleFileNoteRefs.split(" ") : []; }; const setNoteRefs = function setNoteRefs(anchorElement, noteRefs) { anchorElement.dataset.singleFileNoteRefs = noteRefs.join(" "); }; const getAnchorElement = function getAnchorElement(containerElement) { return document.querySelector("[data-single-file-note-refs~=\"" + containerElement.dataset.noteId + "\"]") || document.documentElement; }; const getMaskElement = function getMaskElement(className, containerClassName) { let maskElement = document.documentElement.querySelector("." + className); if (!maskElement) { maskElement = document.createElement("div"); const maskContainerElement = document.createElement("div"); if (containerClassName) { maskContainerElement.classList.add(containerClassName); } maskContainerElement.classList.add(MASK_CLASS); const firstNote = document.querySelector(NOTE_TAGNAME); if (firstNote && firstNote.parentElement == document.documentElement) { document.documentElement.insertBefore(maskContainerElement, firstNote); } else { document.documentElement.appendChild(maskContainerElement); } maskElement.classList.add(className); const maskShadow = maskContainerElement.attachShadow({ mode: "open" }); maskShadow.appendChild(getStyleElement(MASK_WEB_STYLESHEET)); maskShadow.appendChild(maskElement); return maskElement; } }; const getStyleElement = function getStyleElement(stylesheet) { const linkElement = document.createElement("style"); linkElement.textContent = stylesheet; return linkElement; }; const attachNoteListeners = function attachNoteListeners(containerElement, editable = false) { const SELECT_PX_THRESHOLD = 4; const COLLAPSING_NOTE_DELAY = 750; const noteShadow = containerElement.shadowRoot; const noteElement = noteShadow.childNodes[1]; const headerElement = noteShadow.querySelector("header"); const mainElement = noteShadow.querySelector("textarea"); const noteId = containerElement.dataset.noteId; const resizeElement = noteShadow.querySelector(".note-resize"); const anchorIconElement = noteShadow.querySelector(".note-anchor"); const removeNoteElement = noteShadow.querySelector(".note-remove"); mainElement.readOnly = !editable; if (!editable) { anchorIconElement.style.setProperty("display", "none", "important"); } else { anchorIconElement.style.removeProperty("display"); } headerElement.ontouchstart = headerElement.onmousedown = event => { if (event.target == headerElement) { collapseNoteTimeout = setTimeout(() => { noteElement.classList.toggle("note-collapsed"); hideMaskNote(); }, COLLAPSING_NOTE_DELAY); event.preventDefault(); const position = getPosition(event); const clientX = position.clientX; const clientY = position.clientY; const boundingRect = noteElement.getBoundingClientRect(); const deltaX = clientX - boundingRect.left; const deltaY = clientY - boundingRect.top; maskPageElement.classList.add(PAGE_MASK_ACTIVE_CLASS); document.documentElement.style.setProperty("user-select", "none", "important"); anchorElement = getAnchorElement(containerElement); displayMaskNote(); selectNote(noteElement); moveNote(event, deltaX, deltaY); movingNoteMode = { event, deltaX, deltaY }; document.documentElement.ontouchmove = document.documentElement.onmousemove = event => { clearTimeout(collapseNoteTimeout); if (!movingNoteMode) { movingNoteMode = { deltaX, deltaY }; } movingNoteMode.event = event; moveNote(event, deltaX, deltaY); }; } }; resizeElement.ontouchstart = resizeElement.onmousedown = event => { event.preventDefault(); resizingNoteMode = true; selectNote(noteElement); maskPageElement.classList.add(PAGE_MASK_ACTIVE_CLASS); document.documentElement.style.setProperty("user-select", "none", "important"); document.documentElement.ontouchmove = document.documentElement.onmousemove = event => { event.preventDefault(); const { clientX, clientY } = getPosition(event); const boundingRectNote = noteElement.getBoundingClientRect(); noteElement.style.width = clientX - boundingRectNote.left + "px"; noteElement.style.height = clientY - boundingRectNote.top + "px"; }; }; anchorIconElement.ontouchend = anchorIconElement.onclick = event => { event.preventDefault(); noteElement.classList.toggle(NOTE_ANCHORED_CLASS); if (!noteElement.classList.contains(NOTE_ANCHORED_CLASS)) { deleteNoteRef(containerElement, noteId); addNoteRef(document.documentElement, noteId); } onUpdate(false); }; removeNoteElement.ontouchend = removeNoteElement.onclick = event => { event.preventDefault(); deleteNoteRef(containerElement, noteId); containerElement.remove(); }; noteElement.onmousedown = () => { selectNote(noteElement); }; function moveNote(event, deltaX, deltaY) { event.preventDefault(); const { clientX, clientY } = getPosition(event); noteElement.classList.add(NOTE_MOVING_CLASS); if (editable) { if (noteElement.classList.contains(NOTE_ANCHORED_CLASS)) { deleteNoteRef(containerElement, noteId); anchorElement = getTarget(clientX, clientY) || document.documentElement; addNoteRef(anchorElement, noteId); } else { anchorElement = document.documentElement; } } document.documentElement.insertBefore(containerElement, maskPageElement.getRootNode().host); noteElement.style.setProperty("left", (clientX - deltaX) + "px"); noteElement.style.setProperty("top", (clientY - deltaY) + "px"); noteElement.style.setProperty("position", "fixed"); displayMaskNote(); } function displayMaskNote() { if (anchorElement == document.documentElement || anchorElement == document.documentElement) { hideMaskNote(); } else { const boundingRectAnchor = anchorElement.getBoundingClientRect(); maskNoteElement.classList.add(NOTE_MASK_MOVING_CLASS); if (selectedNote) { maskNoteElement.classList.add(selectedNote.dataset.color); } maskNoteElement.style.setProperty("top", (boundingRectAnchor.y - 3) + "px"); maskNoteElement.style.setProperty("left", (boundingRectAnchor.x - 3) + "px"); maskNoteElement.style.setProperty("width", (boundingRectAnchor.width + 3) + "px"); maskNoteElement.style.setProperty("height", (boundingRectAnchor.height + 3) + "px"); } } function hideMaskNote() { maskNoteElement.classList.remove(NOTE_MASK_MOVING_CLASS); if (selectedNote) { maskNoteElement.classList.remove(selectedNote.dataset.color); } } function selectNote(noteElement) { if (selectedNote) { selectedNote.classList.remove(NOTE_SELECTED_CLASS); maskNoteElement.classList.remove(selectedNote.dataset.color); } noteElement.classList.add(NOTE_SELECTED_CLASS); noteElement.classList.add(noteElement.dataset.color); selectedNote = noteElement; } function getTarget(clientX, clientY) { const targets = Array.from(document.elementsFromPoint(clientX, clientY)).filter(element => element.matches("html *:not(" + NOTE_TAGNAME + "):not(." + MASK_CLASS + ")")); if (!targets.includes(document.documentElement)) { targets.push(document.documentElement); } let newTarget, target = targets[0], boundingRect = target.getBoundingClientRect(); newTarget = determineTargetElement("floor", target, clientX - boundingRect.left, getMatchedParents(target, "left")); if (newTarget == target) { newTarget = determineTargetElement("ceil", target, boundingRect.left + boundingRect.width - clientX, getMatchedParents(target, "right")); } if (newTarget == target) { newTarget = determineTargetElement("floor", target, clientY - boundingRect.top, getMatchedParents(target, "top")); } if (newTarget == target) { newTarget = determineTargetElement("ceil", target, boundingRect.top + boundingRect.height - clientY, getMatchedParents(target, "bottom")); } target = newTarget; while (boundingRect = target && target.getBoundingClientRect(), boundingRect && boundingRect.width <= SELECT_PX_THRESHOLD && boundingRect.height <= SELECT_PX_THRESHOLD) { target = target.parentElement; } return target; } function getMatchedParents(target, property) { let element = target, matchedParent, parents = []; do { const boundingRect = element.getBoundingClientRect(); if (element.parentElement && !element.parentElement.tagName.toLowerCase() != NOTE_TAGNAME && !element.classList.contains(MASK_CLASS)) { const parentBoundingRect = element.parentElement.getBoundingClientRect(); matchedParent = Math.abs(parentBoundingRect[property] - boundingRect[property]) <= SELECT_PX_THRESHOLD; if (matchedParent) { if (element.parentElement.clientWidth > SELECT_PX_THRESHOLD && element.parentElement.clientHeight > SELECT_PX_THRESHOLD && ((element.parentElement.clientWidth - element.clientWidth > SELECT_PX_THRESHOLD) || (element.parentElement.clientHeight - element.clientHeight > SELECT_PX_THRESHOLD))) { parents.push(element.parentElement); } element = element.parentElement; } } else { matchedParent = false; } } while (matchedParent && element); return parents; } function determineTargetElement(roundingMethod, target, widthDistance, parents) { if (Math[roundingMethod](widthDistance / SELECT_PX_THRESHOLD) <= parents.length) { target = parents[parents.length - Math[roundingMethod](widthDistance / SELECT_PX_THRESHOLD) - 1]; } return target; } }; const anchorNote = function anchorNote(event, noteElement, deltaX, deltaY) { event.preventDefault(); const { clientX, clientY } = getPosition(event); document.documentElement.style.removeProperty("user-select"); noteElement.classList.remove(NOTE_MOVING_CLASS); maskNoteElement.classList.remove(NOTE_MASK_MOVING_CLASS); maskPageElement.classList.remove(PAGE_MASK_ACTIVE_CLASS); maskNoteElement.classList.remove(noteElement.dataset.color); const headerElement = noteElement.querySelector("header"); headerElement.ontouchmove = document.documentElement.onmousemove = null; let currentElement = anchorElement; let positionedElement; while (currentElement.parentElement && !positionedElement) { if (!FORBIDDEN_TAG_NAMES.includes(currentElement.tagName.toLowerCase())) { const currentElementStyle = getComputedStyle(currentElement); if (currentElementStyle.position != "static") { positionedElement = currentElement; } } currentElement = currentElement.parentElement; } if (!positionedElement) { positionedElement = document.documentElement; } const containerElement = noteElement.getRootNode().host; if (positionedElement == document.documentElement) { const firstMaskElement = document.querySelector("." + MASK_CLASS); firstMaskElement.parentElement.insertBefore(containerElement, firstMaskElement); } else { positionedElement.appendChild(containerElement); } const boundingRectPositionedElement = positionedElement.getBoundingClientRect(); const stylePositionedElement = window.getComputedStyle(positionedElement); const borderX = parseInt(stylePositionedElement.getPropertyValue("border-left-width")); const borderY = parseInt(stylePositionedElement.getPropertyValue("border-top-width")); noteElement.style.setProperty("position", "absolute"); noteElement.style.setProperty("left", (clientX - boundingRectPositionedElement.x - deltaX - borderX) + "px"); noteElement.style.setProperty("top", (clientY - boundingRectPositionedElement.y - deltaY - borderY) + "px"); }; const getPosition = function getPosition(event) { if (event.touches && event.touches.length) { const touch = event.touches[0]; return touch; } else { return event; } }; const onMouseUp = function onMouseUp(event) { if (highlightSelectionMode) { event.preventDefault(); highlightSelection(); onUpdate(false); } if (removeHighlightMode) { event.preventDefault(); let element = event.target, done; while (element && !done) { if (element.classList.contains(HIGHLIGHT_CLASS)) { document.querySelectorAll("." + HIGHLIGHT_CLASS + "[data-singlefile-highlight-id=" + JSON.stringify(element.dataset.singlefileHighlightId) + "]").forEach(highlightedElement => { resetHighlightedElement(highlightedElement); onUpdate(false); }); done = true; } element = element.parentElement; } } if (resizingNoteMode) { event.preventDefault(); resizingNoteMode = false; document.documentElement.style.removeProperty("user-select"); maskPageElement.classList.remove(PAGE_MASK_ACTIVE_CLASS); document.documentElement.ontouchmove = onTouchMove; document.documentElement.onmousemove = null; onUpdate(false); } if (movingNoteMode) { event.preventDefault(); anchorNote(movingNoteMode.event || event, selectedNote, movingNoteMode.deltaX, movingNoteMode.deltaY); movingNoteMode = null; document.documentElement.ontouchmove = onTouchMove; document.documentElement.onmousemove = null; onUpdate(false); } if ((cuttingMode || cuttingOuterMode) && cuttingPath) { event.preventDefault(); if (event.ctrlKey) { const element = cuttingPath[cuttingPathIndex]; element.classList.toggle(cuttingMode ? CUT_SELECTED_CLASS : CUT_OUTER_SELECTED_CLASS); } else { validateCutElement(event.shiftKey); } } if (collapseNoteTimeout) { clearTimeout(collapseNoteTimeout); collapseNoteTimeout = null; } }; const getShadowRoot = function getShadowRoot(element) { const chrome = window.chrome; if (element.openOrClosedShadowRoot) { return element.openOrClosedShadowRoot; } else if (chrome && chrome.dom && chrome.dom.openOrClosedShadowRoot) { try { return chrome.dom.openOrClosedShadowRoot(element); } catch (error) { return element.shadowRoot; } } else { return element.shadowRoot; } }; const maskNoteElement = getMaskElement("note-mask"); const maskPageElement = getMaskElement("page-mask", "single-file-page-mask"); let selectedNote, highlightSelectionMode, removeHighlightMode, resizingNoteMode, movingNoteMode, collapseNoteTimeout, cuttingMode, cuttingOuterMode; window.onresize = reflowNotes; window.onUpdate = () => {}; document.documentElement.onmouseup = document.documentElement.ontouchend = onMouseUp; processNode(document); reflowNotes(); document.querySelectorAll("single-file-note").forEach(noteElement => attachNoteListeners(noteElement)); })()</script>
